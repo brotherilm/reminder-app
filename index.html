@@ -90,9 +90,10 @@
             margin-bottom: 10px;
         }
 
+        .edit-button,
         .delete-button,
         .reset-button {
-            background-color: #f44336;
+            background-color: #4CAF50;
             color: white;
             border: none;
             padding: 5px 10px;
@@ -102,6 +103,10 @@
             font-size: 12px;
             margin-left: 10px;
             cursor: pointer;
+        }
+
+        .delete-button {
+            background-color: #f44336;
         }
 
         .reset-button {
@@ -140,8 +145,6 @@
         <input type="text" name="link" id="link" placeholder="Masukkan link" required>
         <button type="submit">Submit</button>
     </form>
-
-
 
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -214,6 +217,15 @@
                         `;
                         const timerSpan = listItem.querySelector('.timer');
 
+                        // Append the edit button
+                        const editButton = document.createElement('button');
+                        editButton.classList.add('edit-button');
+                        editButton.textContent = 'Edit';
+                        editButton.addEventListener('click', () => {
+                            editData(childSnapshot.key, data.nomor); // Edit data in Firebase
+                        });
+                        listItem.appendChild(editButton);
+
                         // Append the reset button
                         const resetButton = document.createElement('button');
                         resetButton.classList.add('reset-button');
@@ -268,51 +280,59 @@
             });
         }
 
-        // Function to start countdown timer
-        function startTimer(seconds, timerElement, imageElement) {
-            let remainingSeconds = seconds;
-
-            const interval = setInterval(() => {
-                const minutesDisplay = Math.floor(remainingSeconds / 60);
-                const secondsDisplay = remainingSeconds % 60;
-
-                timerElement.textContent = ` ${minutesDisplay} menit ${secondsDisplay} detik`;
-
-                if (remainingSeconds <= 0) {
-                    clearInterval(interval);
-                    timerElement.textContent = ' Waktu habis';
-                    imageElement.style.display = 'inline'; // Show the image when timer ends
-                }
-
-                remainingSeconds--;
-            }, 1000);
-        }
-
-        // Function to reset timer for a specific data entry and open Telegram link
-        function resetTimer(key, link) {
-            const updates = {
-                timestamp: Date.now() // Reset timestamp to current time
-            };
-            update(ref(database, 'users/' + key), updates)
-                .then(() => {
-                    fetchData(); // Refresh the data list after reset
-                    // Open Telegram link in a new tab
-                    window.open(link, '_blank');
-                })
-                .catch((error) => {
-                    console.error('Gagal mereset timer: ', error);
-                });
-        }
-
         // Function to delete data from Firebase
         function deleteData(key) {
-            remove(ref(database, 'users/' + key))
-                .then(() => {
-                    fetchData(); // Refresh the data list after deletion
-                })
-                .catch((error) => {
-                    console.error('Gagal menghapus data: ', error);
+            const dataRef = ref(database, 'users/' + key);
+            remove(dataRef).then(() => {
+                fetchData(); // Refresh the data list
+            }).catch((error) => {
+                console.error('Gagal menghapus data: ', error);
+            });
+        }
+
+        // Function to edit data in Firebase
+        function editData(key, currentNomor) {
+            const newNomor = prompt('Masukkan nomor baru:', currentNomor);
+            if (newNomor !== null) {
+                const dataRef = ref(database, 'users/' + key);
+                update(dataRef, {
+                    nomor: newNomor,
+                    timestamp: Date.now() // Reset timestamp when the number is edited
+                }).then(() => {
+                    fetchData(); // Refresh the data list
+                }).catch((error) => {
+                    console.error('Gagal mengedit data: ', error);
                 });
+            }
+        }
+
+        // Function to reset timer and open link in a new tab
+        function resetTimer(key, link) {
+            const dataRef = ref(database, 'users/' + key);
+            update(dataRef, {
+                timestamp: Date.now() // Reset the timestamp
+            }).then(() => {
+                fetchData(); // Refresh the data list
+                window.open(link, '_blank');
+            }).catch((error) => {
+                console.error('Gagal me-reset timer: ', error);
+            });
+        }
+
+        // Function to start countdown timer
+        function startTimer(minutes, displayElement, imageElement) {
+            let timer = minutes;
+            const countdown = setInterval(() => {
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+                displayElement.textContent = `Waktu tersisa: ${minutes}:${seconds < 10 ? '0' : ''}${seconds} menit`;
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    displayElement.textContent = 'Waktu habis!';
+                    imageElement.style.display = 'block'; // Show the image when time is up
+                }
+            }, 1000);
         }
 
         // Fetch and display data when the page loads
