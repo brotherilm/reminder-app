@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Data to Firebase</title>
+
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Form styles */
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        form input[type="text"],
+        form input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Data list styles */
+        h2 {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        ul#dataList {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        li {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        li span {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .delete-button,
+        .reset-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 12px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .reset-button {
+            background-color: #008CBA;
+        }
+
+        .image-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .image-container img {
+            width: 40px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul id="dataList"></ul>
+
+    <h2>Buat List</h2>
+
+    <form id="dataForm">
+        <label for="nama">Nama:</label>
+        <input type="text" name="nama" id="nama" placeholder="Masukkan nama" required>
+        <br><br>
+        <label for="nomor">Nomor:</label>
+        <input type="number" name="nomor" id="nomor" placeholder="Masukkan nomor" required>
+        <br><br>
+        <label for="link">Link Telegram:</label>
+        <input type="text" name="link" id="link" placeholder="Masukkan link" required>
+        <button type="submit">Submit</button>
+    </form>
+
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import {
+            getDatabase,
+            ref,
+            set,
+            get,
+            child,
+            remove,
+            update
+        } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyArJ1nln6fDepanPT51mM-FUhBheXOXB_Y",
+            authDomain: "reminder-d84a2.firebaseapp.com",
+            projectId: "reminder-d84a2",
+            storageBucket: "reminder-d84a2.appspot.com",
+            messagingSenderId: "1020985301424",
+            appId: "1:1020985301424:web:427ccb088fa1a721fb9e75",
+            databaseURL: "https://reminder-d84a2-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Handle form submission
+        document.getElementById('dataForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting the default way
+            const nama = document.getElementById('nama').value;
+            const nomor = document.getElementById('nomor').value;
+            const link = document.getElementById('link').value;
+
+            // Write data to Firebase
+            const newRef = ref(database, 'users/' + Date.now());
+            set(newRef, {
+                nama: nama,
+                nomor: nomor,
+                link: link,
+                timestamp: Date.now()
+            }).then(() => {
+                // Refresh the data list
+                fetchData();
+            }).catch((error) => {
+                console.error('Gagal menambahkan data: ', error);
+            });
+        });
+
+        // Function to fetch and display data from Firebase
+        function fetchData() {
+            const dbRef = ref(database);
+            get(child(dbRef, 'users')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dataList = document.getElementById('dataList');
+                    dataList.innerHTML = ''; // Clear existing data
+                    const expiredItems = [];
+                    const activeItems = [];
+
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <span>Nama: ${data.nama}</span>
+                            <span>Nomor: ${data.nomor}</span>
+                            <span class="timer"></span>
+                        `;
+                        const timerSpan = listItem.querySelector('.timer');
+
+                        // Append the reset button
+                        const resetButton = document.createElement('button');
+                        resetButton.classList.add('reset-button');
+                        resetButton.textContent = 'Link Telegram';
+                        resetButton.addEventListener('click', () => {
+                            resetTimer(childSnapshot.key, data.link); // Reset timer for this data entry and open link
+                        });
+                        listItem.appendChild(resetButton);
+
+                        // Append the delete button
+                        const deleteButton = document.createElement('button');
+                        deleteButton.classList.add('delete-button');
+                        deleteButton.textContent = 'Hapus';
+                        deleteButton.addEventListener('click', () => {
+                            deleteData(childSnapshot.key); // Delete data from Firebase
+                        });
+                        listItem.appendChild(deleteButton);
+
+                        // Append the image element
+                        const imageContainer = document.createElement('div');
+                        imageContainer.classList.add('image-container');
+                        const image = document.createElement('img');
+                        image.src = 'green.png';
+                        image.style.display = 'none'; // Initially hidden
+                        imageContainer.appendChild(image);
+                        listItem.appendChild(imageContainer);
+
+                        // Start or resume countdown timer
+                        const now = Date.now();
+                        const timestamp = data.timestamp || now;
+                        const timePassed = now - timestamp;
+                        const countdownMinutes = data.nomor * 60 - Math.floor(timePassed / 1000);
+
+                        if (countdownMinutes <= 0) {
+                            expiredItems.push(listItem);
+                        } else {
+                            activeItems.push(listItem);
+                        }
+
+                        startTimer(countdownMinutes, timerSpan, image);
+                    });
+
+                    // Display expired items first
+                    expiredItems.forEach(item => dataList.appendChild(item));
+                    // Display active items
+                    activeItems.forEach(item => dataList.appendChild(item));
+                } else {
+                    console.log('No data available');
+                }
+            }).catch((error) => {
+                console.error('Gagal membaca data: ', error);
+            });
+        }
+
+        // Function to start countdown timer
+        function startTimer(seconds, timerElement, imageElement) {
+            let remainingSeconds = seconds;
+
+            const interval = setInterval(() => {
+                const minutesDisplay = Math.floor(remainingSeconds / 60);
+                const secondsDisplay = remainingSeconds % 60;
+
+                timerElement.textContent = ` ${minutesDisplay} menit ${secondsDisplay} detik`;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(interval);
+                    timerElement.textContent = ' Waktu habis';
+                    imageElement.style.display = 'inline'; // Show the image when timer ends
+                }
+
+                remainingSeconds--;
+            }, 1000);
+        }
+
+        // Function to reset timer for a specific data entry and open Telegram link
+        function resetTimer(key, link) {
+            const updates = {
+                timestamp: Date.now() // Reset timestamp to current time
+            };
+            update(ref(database, 'users/' + key), updates)
+                .then(() => {
+                    fetchData(); // Refresh the data list after reset
+                    // Open Telegram link in a new tab
+                    window.open(link, '_blank');
+                })
+                .catch((error) => {
+                    console.error('Gagal mereset timer: ', error);
+                });
+        }
+
+        // Function to delete data from Firebase
+        function deleteData(key) {
+            remove(ref(database, 'users/' + key))
+                .then(() => {
+                    fetchData(); // Refresh the data list after deletion
+                })
+                .catch((error) => {
+                    console.error('Gagal menghapus data: ', error);
+                });
+        }
+
+        // Fetch and display data when the page loads
+        fetchData();
+    </script>
+</body>
+
+</html>
