@@ -130,6 +130,8 @@
 
 <body>
 
+    <h3>Total Data: <span id="dataCount">0</span></h3>
+
     <ul id="dataList"></ul>
 
     <h2>Buat List</h2>
@@ -190,6 +192,7 @@
                 link: link,
                 timestamp: Date.now()
             }).then(() => {
+                alert('Data berhasil ditambahkan!');
                 // Refresh the data list
                 fetchData();
             }).catch((error) => {
@@ -203,6 +206,7 @@
             get(child(dbRef, 'users')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const dataList = document.getElementById('dataList');
+                    const dataCount = document.getElementById('dataCount');
                     dataList.innerHTML = ''; // Clear existing data
                     const expiredItems = [];
                     const activeItems = [];
@@ -240,7 +244,10 @@
                         deleteButton.classList.add('delete-button');
                         deleteButton.textContent = 'Hapus';
                         deleteButton.addEventListener('click', () => {
-                            deleteData(childSnapshot.key); // Delete data from Firebase
+                            const confirmDelete = confirm('Apakah Anda yakin ingin menghapus data ini?');
+                            if (confirmDelete) {
+                                deleteData(childSnapshot.key); // Delete data from Firebase
+                            }
                         });
                         listItem.appendChild(deleteButton);
 
@@ -268,12 +275,17 @@
                         startTimer(countdownMinutes, timerSpan, image);
                     });
 
+                    // Update the data count
+                    dataCount.textContent = snapshot.size;
+
                     // Display expired items first
                     expiredItems.forEach(item => dataList.appendChild(item));
                     // Display active items
                     activeItems.forEach(item => dataList.appendChild(item));
                 } else {
                     console.log('No data available');
+                    // Update the data count
+                    document.getElementById('dataCount').textContent = '0';
                 }
             }).catch((error) => {
                 console.error('Gagal membaca data: ', error);
@@ -284,6 +296,7 @@
         function deleteData(key) {
             const dataRef = ref(database, 'users/' + key);
             remove(dataRef).then(() => {
+                alert('Data berhasil dihapus!');
                 fetchData(); // Refresh the data list
             }).catch((error) => {
                 console.error('Gagal menghapus data: ', error);
@@ -299,6 +312,7 @@
                     nomor: newNomor,
                     timestamp: Date.now() // Reset timestamp when the number is edited
                 }).then(() => {
+                    alert('Data berhasil diedit!');
                     fetchData(); // Refresh the data list
                 }).catch((error) => {
                     console.error('Gagal mengedit data: ', error);
@@ -312,6 +326,7 @@
             update(dataRef, {
                 timestamp: Date.now() // Reset the timestamp
             }).then(() => {
+                alert('Timer berhasil di-reset!');
                 fetchData(); // Refresh the data list
                 window.open(link, '_blank');
             }).catch((error) => {
