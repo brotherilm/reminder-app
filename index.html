@@ -214,11 +214,10 @@
                     snapshot.forEach((childSnapshot) => {
                         const data = childSnapshot.val();
                         const listItem = document.createElement('li');
-                        listItem.innerHTML = `
-                            <span>Nama: ${data.nama}</span>
+                        listItem.innerHTML =
+                            `<span>Nama: ${data.nama}</span>
                             <span>Nomor: ${data.nomor}</span>
-                            <span class="timer"></span>
-                        `;
+                            <span class="timer"></span>`;
                         const timerSpan = listItem.querySelector('.timer');
 
                         // Append the edit button
@@ -326,9 +325,8 @@
             update(dataRef, {
                 timestamp: Date.now() // Reset the timestamp
             }).then(() => {
-                alert('Timer berhasil di-reset!');
-                fetchData(); // Refresh the data list
                 window.open(link, '_blank');
+                fetchData(); // Refresh the data list
             }).catch((error) => {
                 console.error('Gagal me-reset timer: ', error);
             });
