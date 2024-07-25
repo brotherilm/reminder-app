@@ -5,126 +5,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
-
+    <link rel="stylesheet" href="style1.css">
     <style>
-        /* Global styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-        }
+          /* Global styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        /* Form styles */
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 0 auto;
-        }
 
-        form label {
-            display: block;
-            margin-bottom: 8px;
-        }
 
-        form input[type="text"],
-        form input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+/* Form styles */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
 
-        form button[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+form label {
+    display: block;
+    margin-bottom: 8px;
+}
 
-        /* Data list styles */
-        h2 {
-            text-align: center;
-            margin-top: 40px;
-        }
+form input[type="text"],
+form input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
 
-        ul#dataList {
-            list-style-type: none;
-            padding: 0;
-            display: grid;
-            gap: 20px;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        }
+form button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-        li {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
+/* Data list styles */
+h2 {
+    text-align: center;
+    margin-top: 40px;
+}
 
-        li span {
-            display: block;
-            margin-bottom: 10px;
-        }
+ul#dataList {
+    list-style-type: none;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
 
-        .timer {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
+li {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
 
-        .edit-button,
-        .delete-button,
-        .reset-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 12px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
+li span {
+    display: block;
+    margin-bottom: 10px;
+}
 
-        .delete-button {
-            background-color: #f44336;
-        }
+.timer {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 
-        .reset-button {
-            background-color: #008CBA;
-        }
+.edit-button,
+.delete-button,
+.reset-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin-left: 10px;
+    cursor: pointer;
+}
 
-        .image-container {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            align-items: center;
-        }
+.delete-button {
+    background-color: #f44336;
+}
 
-        .image-container img {
-            width: 40px;
-            height: auto;
-        }
+.reset-button {
+    background-color: #008CBA;
+}
+
+.image-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.image-container img {
+    width: 40px;
+    height: auto;
+}
+
     </style>
 </head>
 
@@ -150,18 +153,8 @@
 
     <script type="module">
         // Import the functions you need from the SDKs you need
-        import {
-            initializeApp
-        } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-        import {
-            getDatabase,
-            ref,
-            set,
-            get,
-            child,
-            remove,
-            update
-        } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getDatabase, ref, set, get, child, remove, update } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyArJ1nln6fDepanPT51mM-FUhBheXOXB_Y",
@@ -176,29 +169,6 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-
-        // Handle form submission
-        document.getElementById('dataForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the form from submitting the default way
-            const nama = document.getElementById('nama').value;
-            const nomor = document.getElementById('nomor').value;
-            const link = document.getElementById('link').value;
-
-            // Write data to Firebase
-            const newRef = ref(database, 'users/' + Date.now());
-            set(newRef, {
-                nama: nama,
-                nomor: nomor,
-                link: link,
-                timestamp: Date.now()
-            }).then(() => {
-                alert('Data berhasil ditambahkan!');
-                // Refresh the data list
-                fetchData();
-            }).catch((error) => {
-                console.error('Gagal menambahkan data: ', error);
-            });
-        });
 
         // Function to fetch and display data from Firebase
         function fetchData() {
@@ -219,6 +189,21 @@
                             <span>Nomor: ${data.nomor}</span>
                             <span class="timer"></span>`;
                         const timerSpan = listItem.querySelector('.timer');
+
+                        // Append the checkbox
+                        // Append the checkbox
+                        const checkbox = document.createElement('input');
+                        checkbox.classList.add('form-checkbox');
+                        checkbox.type = 'checkbox';
+                        checkbox.checked = data.checked || false; // Default to unchecked if not present in data
+                        checkbox.style.width = '20px'; // Set width
+                        checkbox.style.height = '20px'; // Set height
+                        checkbox.addEventListener('change', () => {
+                            updateCheckbox(childSnapshot.key, checkbox.checked);
+                        });
+                        listItem.appendChild(checkbox);
+
+
 
                         // Append the edit button
                         const editButton = document.createElement('button');
@@ -291,6 +276,30 @@
             });
         }
 
+        // Handle form submission
+        document.getElementById('dataForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting the default way
+            const nama = document.getElementById('nama').value;
+            const nomor = document.getElementById('nomor').value;
+            const link = document.getElementById('link').value;
+
+            // Write data to Firebase
+            const newRef = ref(database, 'users/' + Date.now());
+            set(newRef, {
+                nama: nama,
+                nomor: nomor,
+                link: link,
+                timestamp: Date.now(),
+                checked: false // Initial checkbox state
+            }).then(() => {
+                alert('Data berhasil ditambahkan!');
+                // Refresh the data list
+                fetchData();
+            }).catch((error) => {
+                console.error('Gagal menambahkan data: ', error);
+            });
+        });
+
         // Function to delete data from Firebase
         function deleteData(key) {
             const dataRef = ref(database, 'users/' + key);
@@ -329,6 +338,16 @@
                 fetchData(); // Refresh the data list
             }).catch((error) => {
                 console.error('Gagal me-reset timer: ', error);
+            });
+        }
+
+        // Function to update checkbox state in Firebase
+        function updateCheckbox(key, isChecked) {
+            const dataRef = ref(database, 'users/' + key);
+            update(dataRef, {
+                checked: isChecked
+            }).catch((error) => {
+                console.error('Gagal memperbarui checkbox: ', error);
             });
         }
 
