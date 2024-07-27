@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
-    <link rel="stylesheet" href="style1.css">
     <style>
-          /* Global styles */
-  body {
+        body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
@@ -19,10 +17,59 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* General Styles for Form Elements */
+.form-search,
+.group-dropdown {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin-bottom: 16px; /* Consistent spacing */
+}
 
+.form-search:focus,
+.group-dropdown:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+/* Specific Styles for the Dropdown */
+.group-dropdown {
+    appearance: none; /* Remove default dropdown arrow */
+    background-image: linear-gradient(45deg, transparent 50%, #666 50%),
+                      linear-gradient(135deg, #666 50%, transparent 50%);
+    background-position: calc(100% - 16px) center;
+    background-size: 12px 12px;
+    background-repeat: no-repeat;
+}
+
+/* Styles for headings */
+h3, h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+h4 {
+    font-size: 16px;
+}
+
+/* Span inside h3 for data count */
+#dataCount {
+    font-weight: bold;
+    color:black;
+}
 
 /* Form styles */
-form {
+.dataForm {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -31,14 +78,14 @@ form {
     margin: 0 auto;
 }
 
-form label {
+.dataForm label {
     display: block;
     margin-bottom: 8px;
 }
 
-form input[type="text"],
-form input[type="number"] {
-    width: 100%;
+.dataForm input[type="text"],
+.dataForm input[type="number"] {
+    width: calc(100% - 16px); /* Adjust for padding */
     padding: 8px;
     margin-bottom: 12px;
     border: 1px solid #ccc;
@@ -46,7 +93,7 @@ form input[type="number"] {
     box-sizing: border-box;
 }
 
-form button[type="submit"] {
+.dataForm button[type="submit"] {
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -59,12 +106,92 @@ form button[type="submit"] {
     cursor: pointer;
 }
 
-/* Data list styles */
-h2 {
-    text-align: center;
-    margin-top: 40px;
+/* Search Form Styles */
+#searchForm {
+    margin: 20px auto;
+    max-width: 400px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Search Input */
+#searchForm input[type="text"] {
+    width: calc(100% - 16px); /* Adjust for padding */
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+#searchForm input[type="text"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Dropdown Group Styles */
+.group-dropdown-container {
+    margin: 20px auto;
+    max-width: 400px;
+}
+
+.group-dropdown {
+    width: calc(100% - 16px); /* Adjust for padding */
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    font-size: 16px;
+    appearance: none; /* Remove default arrow */
+    transition: border-color 0.3s;
+}
+
+.group-dropdown:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Dropdown arrow */
+.group-dropdown-container::after {
+    content: '▼';
+    font-size: 14px;
+    color: #666;
+    position: absolute;
+    right: 16px;
+    top: calc(50% - 6px);
+    pointer-events: none;
+}
+
+.group-dropdown-container {
+    position: relative;
+    width: calc(100% - 16px); /* Adjust for padding */
+    max-width: 400px;
+}
+
+/* Form Button */
+#searchForm button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#searchForm button:hover {
+    background-color: #45a049;
+}
+
+/* Data list styles */
 ul#dataList {
     list-style-type: none;
     padding: 0;
@@ -128,18 +255,32 @@ li span {
     height: auto;
 }
 
+
+
     </style>
 </head>
 
 <body>
+    <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
+    <br><br>
 
     <h3>Total Data: <span id="dataCount">0</span></h3>
 
+    <!-- Dropdown for selecting groups -->
+    <h4>Pilih Grup:</h4>
+    <select id="groupSelect" class="group-dropdown">
+        <option value="">Semua Grup</option>
+        <option value="Group 1">Group 1</option>
+        <option value="Group 2">Group 2</option>
+        <option value="Group 3">Group 3</option>
+        <option value="Group 4">Group 4</option>
+    </select>
+
     <ul id="dataList"></ul>
 
-    <h2>Buat List</h2>
+    <h2 style="text-align: center;">Buat List</h2>
 
-    <form id="dataForm">
+    <form id="dataForm" class="dataForm">
         <label for="nama">Nama:</label>
         <input type="text" name="nama" id="nama" placeholder="Masukkan nama" required>
         <br><br>
@@ -170,8 +311,18 @@ li span {
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        document.getElementById('searchInput').addEventListener('input', function () {
+            fetchData();
+        });
+
+        document.getElementById('groupSelect').addEventListener('change', function () {
+            fetchData();
+        });
+
         // Function to fetch and display data from Firebase
         function fetchData() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const selectedGroup = document.getElementById('groupSelect').value;
             const dbRef = ref(database);
             get(child(dbRef, 'users')).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -183,80 +334,102 @@ li span {
 
                     snapshot.forEach((childSnapshot) => {
                         const data = childSnapshot.val();
-                        const listItem = document.createElement('li');
-                        listItem.innerHTML =
-                            `<span>Nama: ${data.nama}</span>
-                            <span>Nomor: ${data.nomor}</span>
-                            <span class="timer"></span>`;
-                        const timerSpan = listItem.querySelector('.timer');
+                        if (data.nama.toLowerCase().includes(searchQuery) &&
+                            (selectedGroup === '' || data.group === selectedGroup)) {
 
-                        // Append the checkbox
-                        // Append the checkbox
-                        const checkbox = document.createElement('input');
-                        checkbox.classList.add('form-checkbox');
-                        checkbox.type = 'checkbox';
-                        checkbox.checked = data.checked || false; // Default to unchecked if not present in data
-                        checkbox.style.width = '20px'; // Set width
-                        checkbox.style.height = '20px'; // Set height
-                        checkbox.addEventListener('change', () => {
-                            updateCheckbox(childSnapshot.key, checkbox.checked);
-                        });
-                        listItem.appendChild(checkbox);
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML =
+                                `<span>Nama: ${data.nama}</span>
+                                <span>Nomor: ${data.nomor}</span>
+                                <span class="timer"></span>`;
+                            const timerSpan = listItem.querySelector('.timer');
 
+                            // Append the checkbox
+                            const checkbox = document.createElement('input');
+                            checkbox.classList.add('form-checkbox');
+                            checkbox.type = 'checkbox';
+                            checkbox.checked = data.checked || false; // Default to unchecked if not present in data
+                            checkbox.style.width = '20px'; // Set width
+                            checkbox.style.height = '20px'; // Set height
+                            checkbox.addEventListener('change', () => {
+                                updateCheckbox(childSnapshot.key, checkbox.checked);
+                            });
+                            listItem.appendChild(checkbox);
 
+                            // Append the edit button
+                            const editButton = document.createElement('button');
+                            editButton.classList.add('edit-button');
+                            editButton.textContent = 'Edit';
+                            editButton.addEventListener('click', () => {
+                                editData(childSnapshot.key, data.nomor); // Edit data in Firebase
+                            });
+                            listItem.appendChild(editButton);
 
-                        // Append the edit button
-                        const editButton = document.createElement('button');
-                        editButton.classList.add('edit-button');
-                        editButton.textContent = 'Edit';
-                        editButton.addEventListener('click', () => {
-                            editData(childSnapshot.key, data.nomor); // Edit data in Firebase
-                        });
-                        listItem.appendChild(editButton);
+                            // Append the reset button
+                            const resetButton = document.createElement('button');
+                            resetButton.classList.add('reset-button');
+                            resetButton.textContent = 'Link Telegram';
+                            resetButton.addEventListener('click', () => {
+                                resetTimer(childSnapshot.key, data.link); // Reset timer for this data entry and open link
+                            });
+                            listItem.appendChild(resetButton);
 
-                        // Append the reset button
-                        const resetButton = document.createElement('button');
-                        resetButton.classList.add('reset-button');
-                        resetButton.textContent = 'Link Telegram';
-                        resetButton.addEventListener('click', () => {
-                            resetTimer(childSnapshot.key, data.link); // Reset timer for this data entry and open link
-                        });
-                        listItem.appendChild(resetButton);
+                            // Append the delete button
+                            const deleteButton = document.createElement('button');
+                            deleteButton.classList.add('delete-button');
+                            deleteButton.textContent = 'Hapus';
+                            deleteButton.addEventListener('click', () => {
+                                const confirmDelete = confirm('Apakah Anda yakin ingin menghapus data ini?');
+                                if (confirmDelete) {
+                                    deleteData(childSnapshot.key); // Delete data from Firebase
+                                }
+                            });
+                            listItem.appendChild(deleteButton);
 
-                        // Append the delete button
-                        const deleteButton = document.createElement('button');
-                        deleteButton.classList.add('delete-button');
-                        deleteButton.textContent = 'Hapus';
-                        deleteButton.addEventListener('click', () => {
-                            const confirmDelete = confirm('Apakah Anda yakin ingin menghapus data ini?');
-                            if (confirmDelete) {
-                                deleteData(childSnapshot.key); // Delete data from Firebase
+                            // Append the image element
+                            const imageContainer = document.createElement('div');
+                            imageContainer.classList.add('image-container');
+                            const image = document.createElement('img');
+                            image.src = 'green.png';
+                            image.style.display = 'none'; // Initially hidden
+                            imageContainer.appendChild(image);
+                            listItem.appendChild(imageContainer);
+
+                            // Append the group dropdown
+                            const groupDropdown = document.createElement('select');
+                            groupDropdown.classList.add('group-dropdown');
+                            ['Group 1', 'Group 2', 'Group 3', 'Group 4'].forEach(group => {
+                                const option = document.createElement('option');
+                                option.value = group;
+                                option.text = group;
+                                groupDropdown.appendChild(option);
+                            });
+                            groupDropdown.value = data.group || 'Group 1'; // Set current group
+                            listItem.appendChild(groupDropdown);
+
+                            // Append the move button
+                            const moveButton = document.createElement('button');
+                            moveButton.classList.add('move-button');
+                            moveButton.textContent = 'Move to Group';
+                            moveButton.addEventListener('click', () => {
+                                moveToGroup(childSnapshot.key, groupDropdown.value);
+                            });
+                            listItem.appendChild(moveButton);
+
+                            // Start or resume countdown timer
+                            const now = Date.now();
+                            const timestamp = data.timestamp || now;
+                            const timePassed = now - timestamp;
+                            const countdownMinutes = data.nomor * 60 - Math.floor(timePassed / 1000);
+
+                            if (countdownMinutes <= 0) {
+                                expiredItems.push(listItem);
+                            } else {
+                                activeItems.push(listItem);
                             }
-                        });
-                        listItem.appendChild(deleteButton);
 
-                        // Append the image element
-                        const imageContainer = document.createElement('div');
-                        imageContainer.classList.add('image-container');
-                        const image = document.createElement('img');
-                        image.src = 'green.png';
-                        image.style.display = 'none'; // Initially hidden
-                        imageContainer.appendChild(image);
-                        listItem.appendChild(imageContainer);
-
-                        // Start or resume countdown timer
-                        const now = Date.now();
-                        const timestamp = data.timestamp || now;
-                        const timePassed = now - timestamp;
-                        const countdownMinutes = data.nomor * 60 - Math.floor(timePassed / 1000);
-
-                        if (countdownMinutes <= 0) {
-                            expiredItems.push(listItem);
-                        } else {
-                            activeItems.push(listItem);
+                            startTimer(countdownMinutes, timerSpan, image);
                         }
-
-                        startTimer(countdownMinutes, timerSpan, image);
                     });
 
                     // Update the data count
@@ -290,38 +463,31 @@ li span {
                 nomor: nomor,
                 link: link,
                 timestamp: Date.now(),
-                checked: false // Initial checkbox state
+                checked: false, // Initial checkbox state
+                group: 'Group 1' // Default group
             }).then(() => {
-                alert('Data berhasil ditambahkan!');
-                // Refresh the data list
-                fetchData();
+                fetchData(); // Refresh data
+                document.getElementById('dataForm').reset(); // Reset the form
             }).catch((error) => {
-                console.error('Gagal menambahkan data: ', error);
+                console.error('Gagal menulis data: ', error);
             });
         });
 
-        // Function to delete data from Firebase
-        function deleteData(key) {
-            const dataRef = ref(database, 'users/' + key);
-            remove(dataRef).then(() => {
-                alert('Data berhasil dihapus!');
-                fetchData(); // Refresh the data list
-            }).catch((error) => {
-                console.error('Gagal menghapus data: ', error);
+        // Update checkbox state in Firebase
+        function updateCheckbox(key, checked) {
+            const updates = {};
+            updates[`/users/${key}/checked`] = checked;
+            update(ref(database), updates).catch((error) => {
+                console.error('Gagal memperbarui checkbox: ', error);
             });
         }
 
-        // Function to edit data in Firebase
-        function editData(key, currentNomor) {
-            const newNomor = prompt('Masukkan nomor baru:', currentNomor);
+        // Edit data in Firebase
+        function editData(key, nomor) {
+            const newNomor = prompt('Edit nomor:', nomor);
             if (newNomor !== null) {
-                const dataRef = ref(database, 'users/' + key);
-                update(dataRef, {
-                    nomor: newNomor,
-                    timestamp: Date.now() // Reset timestamp when the number is edited
-                }).then(() => {
-                    alert('Data berhasil diedit!');
-                    fetchData(); // Refresh the data list
+                update(ref(database, 'users/' + key), {
+                    nomor: newNomor
                 }).catch((error) => {
                     console.error('Gagal mengedit data: ', error);
                 });
@@ -341,13 +507,22 @@ li span {
             });
         }
 
-        // Function to update checkbox state in Firebase
-        function updateCheckbox(key, isChecked) {
-            const dataRef = ref(database, 'users/' + key);
-            update(dataRef, {
-                checked: isChecked
+        // Delete data from Firebase
+        function deleteData(key) {
+            remove(ref(database, 'users/' + key)).catch((error) => {
+                console.error('Gagal menghapus data: ', error);
+            });
+        }
+
+        // Move data to a different group
+        function moveToGroup(key, group) {
+            update(ref(database, 'users/' + key), {
+                group: group
+            }).then(() => {
+                fetchData(); // Refresh data
+                alert('Data berhasil dipindahkan ke grup ' + group); // Alert on successful move
             }).catch((error) => {
-                console.error('Gagal memperbarui checkbox: ', error);
+                console.error('Gagal memindahkan data: ', error);
             });
         }
 
@@ -367,7 +542,7 @@ li span {
             }, 1000);
         }
 
-        // Fetch and display data when the page loads
+        // Initial data fetch
         fetchData();
     </script>
 </body>
