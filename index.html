@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
     <style>
-        body {
+body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
@@ -255,6 +255,26 @@ li span {
     height: auto;
 }
 
+.scroll-button {
+    position: fixed;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.scroll-to-bottom {
+    top: 20px;
+    right: 20px;
+}
+
+.scroll-to-top {
+    bottom: 20px;
+    right: 20px;
+}
+
 
 
     </style>
@@ -265,6 +285,9 @@ li span {
     <br><br>
 
     <h3>Total Data: <span id="dataCount">0</span></h3>
+
+    <!-- Tombol untuk menggulir ke bawah -->
+    <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
 
     <!-- Dropdown for selecting groups -->
     <h4>Pilih Grup:</h4>
@@ -280,6 +303,8 @@ li span {
 
     <ul id="dataList"></ul>
 
+    <button id="scrollToTopBtn" class="scroll-button scroll-to-top">Scroll to Top</button>
+
     <h2 style="text-align: center;">Buat List</h2>
 
     <form id="dataForm" class="dataForm">
@@ -293,6 +318,8 @@ li span {
         <input type="text" name="link" id="link" placeholder="Masukkan link" required>
         <button type="submit">Submit</button>
     </form>
+
+
 
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -543,6 +570,38 @@ li span {
                 }
             }, 1000);
         }
+
+        // Tambahkan kode untuk tombol scroll
+        document.getElementById('scrollToBottomBtn').addEventListener('click', function () {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+
+        document.getElementById('scrollToTopBtn').addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Fungsi untuk menampilkan atau menyembunyikan tombol scroll
+        window.addEventListener('scroll', function () {
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+            if (window.scrollY > 100) {
+                scrollToTopBtn.style.display = 'block';
+            } else {
+                scrollToTopBtn.style.display = 'none';
+            }
+
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                scrollToBottomBtn.style.display = 'none';
+            } else {
+                scrollToBottomBtn.style.display = 'block';
+            }
+        });
 
         // Initial data fetch
         fetchData();
