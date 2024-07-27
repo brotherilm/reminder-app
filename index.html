@@ -275,12 +275,50 @@ li span {
     right: 20px;
 }
 
+#editModal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+#editModal div {
+    margin-bottom: 10px;
+}
+
+#editModal button {
+    margin-right: 10px;
+}
 
 
     </style>
 </head>
 
 <body>
+
+    <div id="editModal" style="display:none;">
+        <div>
+            <label for="editNomor">Nomor:</label>
+            <input type="text" id="editNomor">
+        </div>
+        <div>
+            <label for="editNama">Nama:</label>
+            <input type="text" id="editNama">
+        </div>
+        <div>
+            <label for="editLink">Link:</label>
+            <input type="text" id="editLink">
+        </div>
+        <button onclick="submitEditData()">Submit</button>
+        <button onclick="closeModal()">Cancel</button>
+    </div>
+
+
+
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
     <br><br>
 
@@ -390,7 +428,7 @@ li span {
                             editButton.classList.add('edit-button');
                             editButton.textContent = 'Edit';
                             editButton.addEventListener('click', () => {
-                                editData(childSnapshot.key, data.nomor); // Edit data in Firebase
+                                editData(childSnapshot.key, data.nomor, data.nama, data.link); // Edit data in Firebase
                             });
                             listItem.appendChild(editButton);
 
@@ -512,16 +550,51 @@ li span {
         }
 
         // Edit data in Firebase
-        function editData(key, nomor) {
-            const newNomor = prompt('Edit nomor:', nomor);
-            if (newNomor !== null) {
-                update(ref(database, 'users/' + key), {
-                    nomor: newNomor
-                }).catch((error) => {
-                    console.error('Gagal mengedit data: ', error);
-                });
-            }
+        // Function to open the modal and populate the inputs with current values
+        function editData(key, nomor, nama, link) {
+            document.getElementById('editNomor').value = nomor;
+            document.getElementById('editNama').value = nama;
+            document.getElementById('editLink').value = link;
+            document.getElementById('editModal').style.display = 'block';
+
+            // Store the key globally to use it when submitting
+            window.currentEditKey = key;
         }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Function to submit the updated data to Firebase
+        function submitEditData() {
+            const key = window.currentEditKey;
+            const newNomor = document.getElementById('editNomor').value;
+            const newNama = document.getElementById('editNama').value;
+            const newLink = document.getElementById('editLink').value;
+
+            // Update the data in Firebase
+            update(ref(database, 'users/' + key), {
+                nomor: newNomor,
+                nama: newNama,
+                link: newLink
+            }).then(() => {
+                fetchData(); // Refresh data
+                closeModal(); // Close the modal
+                alert('Data berhasil diperbarui'); // Show success message
+            }).catch((error) => {
+                console.error('Gagal mengedit data: ', error);
+            });
+        }
+
+        // Add event listener to the submit button in the edit modal
+        document.querySelector('#editModal button[onclick="submitEditData()"]').addEventListener('click', submitEditData);
+
+        // Add event listener to the cancel button in the edit modal
+        document.querySelector('#editModal button[onclick="closeModal()"]').addEventListener('click', closeModal);
+
+
+
 
         // Function to reset timer and open link in a new tab
         function resetTimer(key, link) {
