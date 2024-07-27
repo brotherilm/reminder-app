@@ -270,10 +270,12 @@ li span {
     <h4>Pilih Grup:</h4>
     <select id="groupSelect" class="group-dropdown">
         <option value="">Semua Grup</option>
-        <option value="Group 1">Group 1</option>
-        <option value="Group 2">Group 2</option>
-        <option value="Group 3">Group 3</option>
-        <option value="Group 4">Group 4</option>
+        <option value="Tap hand">Tap Hand</option>
+        <option value="Tap Bot">Tap Bot</option>
+        <option value="Claim only">Claim only</option>
+        <option value="Claim + Task">Claim + Task</option>
+        <option value="Claim + Play">Claim + Play</option>
+        <option value="Sementara">Sementara</option>
     </select>
 
     <ul id="dataList"></ul>
@@ -398,7 +400,7 @@ li span {
                             // Append the group dropdown
                             const groupDropdown = document.createElement('select');
                             groupDropdown.classList.add('group-dropdown');
-                            ['Group 1', 'Group 2', 'Group 3', 'Group 4'].forEach(group => {
+                            ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara'].forEach(group => {
                                 const option = document.createElement('option');
                                 option.value = group;
                                 option.text = group;
