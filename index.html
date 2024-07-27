@@ -275,24 +275,32 @@ li span {
     right: 20px;
 }
 
-#editModal {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border: 1px solid #ccc;
-    z-index: 1000;
-}
-
 #editModal div {
     margin-bottom: 10px;
 }
 
-#editModal button {
-    margin-right: 10px;
+#editModal input[type="text"] {
+    width: 100%; /* Membuat input mengisi lebar kontainer */
+    padding: 10px; /* Memberikan padding di dalam input */
+    border: 1px solid #ddd; /* Mengubah warna border untuk tampilan lebih bersih */
+    border-radius: 4px; /* Membuat sudut input menjadi melengkung */
+    box-sizing: border-box; /* Menghitung padding dan border dalam lebar total */
 }
+
+#editModal button {
+    padding: 10px 15px; /* Memberikan padding pada tombol */
+    font-size: 16px; /* Mengatur ukuran font tombol */
+    border-radius: 4px; /* Membuat sudut tombol menjadi melengkung */
+    border: none; /* Menghapus border tombol default */
+    background-color: #007bff; /* Mengatur warna latar belakang tombol */
+    color: white; /* Mengatur warna teks tombol */
+    cursor: pointer; /* Mengubah cursor saat hover di tombol */
+}
+
+#editModal button:hover {
+    background-color: #0056b3; /* Mengubah warna latar belakang tombol saat hover */
+}
+
 
 
     </style>
