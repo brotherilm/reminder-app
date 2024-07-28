@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
+    <link rel="stylesheet" href="style1.css">
+</head>
+
     <style>
-body {
+
+        body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
@@ -18,9 +22,26 @@ h1 {
 }
 
 /* General Styles for Form Elements */
+
+/* General Styles for Form Elements */
 .form-search,
-.group-dropdown {
-    width: 100%;
+.group-dropdown,
+.note-input {
+    width: calc(100% - 16px); /* Adjust width to match padding */
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    margin-bottom: 16px; /* Consistent spacing */
+}
+/* General Styles for Form Elements */
+.form-search,
+.group-dropdown,
+.note-input {
+    width: calc(100% - 16px); /* Adjust width to match padding */
     padding: 14px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -32,7 +53,8 @@ h1 {
 }
 
 .form-search:focus,
-.group-dropdown:focus {
+.group-dropdown:focus,
+.note-input:focus {
     border-color: #4CAF50;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
     outline: none;
@@ -47,6 +69,16 @@ h1 {
     background-size: 12px 12px;
     background-repeat: no-repeat;
 }
+
+/* Read-only Styles for Note Input */
+.note-input[readonly] {
+    background-color: #f5f5f5; /* Light grey background */
+    border-color: #ddd; /* Lighter border color */
+    color: #999; /* Grey text color */
+    cursor: pointer; /* Show pointer cursor to indicate it's clickable */
+    box-shadow: none; /* Remove box-shadow */
+}
+
 
 /* Styles for headings */
 h3, h4 {
@@ -280,13 +312,12 @@ li span {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background:  #f0f0f0;
+    background: #f0f0f0;
     padding: 20px;
     border: 1px solid #ccc;
     z-index: 1000;
     width: 300px; /* Menambahkan lebar modal untuk estetika */
 }
-
 
 #editModal div {
     margin-bottom: 10px;
@@ -314,12 +345,113 @@ li span {
     background-color: #0056b3; /* Mengubah warna latar belakang tombol saat hover */
 }
 
+/* Styles for the floating card modal */
+#editNoteModal {
+    display: none; /* Initially hidden */
+    position: fixed; /* Fixed position to make it float */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for perfect centering */
+    width: 90%; /* Width relative to the viewport */
+    max-width: 400px; /* Maximum width */
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for floating effect */
+    padding: 20px; /* Inner padding */
+    z-index: 1000; /* Ensure it appears above other elements */
+    box-sizing: border-box; /* Ensure padding is included in width calculations */
+}
+
+#editNoteModal div {
+    margin-bottom: 20px; /* Space between input and buttons */
+}
+
+#editNoteModal input[type="text"] {
+    width: 100%; /* Full width */
+    padding: 14px; /* Increase padding */
+    border: 1px solid #ccc; /* Consistent border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+    box-sizing: border-box; /* Ensure padding is included in width calculations */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+#editNoteModal input[type="text"]:focus {
+    border-color: #4CAF50; /* Border color on focus */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Box shadow on focus */
+    outline: none; /* Remove outline */
+}
+
+#editNoteModal button {
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-right: 10px; /* Space between buttons */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+#editNoteModal button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Style for cancel button */
+#editNoteModal button:last-child {
+    background-color: #f44336; /* Red background */
+}
+
+#editNoteModal button:last-child:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Optional: Background overlay for the modal */
+#modalOverlay {
+    display: none; /* Initially hidden */
+    position: fixed; /* Fixed position to cover entire screen */
+    top: 0; /* Start at the top */
+    left: 0; /* Start at the left */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 999; /* Below the modal */
+}
+
+/* Styles for the reload button */
+#reloadButton {
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    border: none; /* Remove default border */
+    border-radius: 6px; /* Rounded corners */
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  
+}
+
+#reloadButton:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: scale(1.1); /* Slightly larger on hover */
+}
 
 
     </style>
-</head>
-
 <body>
+
+
+
+    <div id="editNoteModal" style="display:none;">
+        <div>
+            <label for="editNote">Edit Note:</label>
+            <input type="text" id="editNote">
+        </div>
+        <button onclick="submitEditNote()">Submit</button>
+        <button onclick="closeNoteModal()">Cancel</button>
+    </div>
+
 
     <div id="editModal" style="display:none;">
         <div>
@@ -343,7 +475,11 @@ li span {
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
     <br><br>
 
-    <h3>Total Data: <span id="dataCount">0</span></h3>
+    <div style="display: flex; justify-content: space-between;">
+        <h3>Total Data: <span id="dataCount">0</span></h3>
+        <button id="reloadButton">Reload</button>
+    </div>
+
 
     <!-- Tombol untuk menggulir ke bawah -->
     <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
@@ -483,6 +619,18 @@ li span {
                             imageContainer.appendChild(image);
                             listItem.appendChild(imageContainer);
 
+
+                            // Append the note input (as a text input)
+                            const noteInput = document.createElement('input');
+                            noteInput.type = 'text';
+                            noteInput.classList.add('note-input');
+                            noteInput.value = data.note;
+                            noteInput.readOnly = true; // Make the input read-only
+                            noteInput.addEventListener('click', () => {
+                                noteData(childSnapshot.key, data.note);
+                            });
+                            listItem.appendChild(noteInput);
+
                             // Append the group dropdown
                             const groupDropdown = document.createElement('select');
                             groupDropdown.classList.add('group-dropdown');
@@ -608,6 +756,44 @@ li span {
             });
         }
 
+        // Function to open the edit note modal and populate the input with the current value
+        function noteData(key, note) {
+            document.getElementById('editNote').value = note;
+            document.getElementById('editNoteModal').style.display = 'block';
+
+            // Store the key globally to use it when submitting
+            window.currentEditNoteKey = key;
+        }
+
+        // Function to close the edit note modal
+        function closeNoteModal() {
+            document.getElementById('editNoteModal').style.display = 'none';
+        }
+
+        // Function to submit the updated note to Firebase
+        function submitEditNote() {
+            const key = window.currentEditNoteKey;
+            const newNote = document.getElementById('editNote').value;
+
+            // Update the note in Firebase
+            update(ref(database, 'users/' + key), {
+                note: newNote
+            }).then(() => {
+                fetchData(); // Refresh data
+                closeNoteModal(); // Close the modal
+                alert('Note berhasil diperbarui'); // Show success message
+            }).catch((error) => {
+                console.error('Gagal mengedit note: ', error);
+            });
+        }
+
+        // Add event listener to the submit button in the edit note modal
+        document.querySelector('#editNoteModal button[onclick="submitEditNote()"]').addEventListener('click', submitEditNote);
+
+        // Add event listener to the cancel button in the edit note modal
+        document.querySelector('#editNoteModal button[onclick="closeNoteModal()"]').addEventListener('click', closeNoteModal);
+
+
         // Add event listener to the submit button in the edit modal
         document.querySelector('#editModal button[onclick="submitEditData()"]').addEventListener('click', submitEditData);
 
@@ -697,6 +883,9 @@ li span {
             }
         });
 
+        document.getElementById('reloadButton').addEventListener('click', function () {
+            location.reload();
+        });
         // Initial data fetch
         fetchData();
     </script>
