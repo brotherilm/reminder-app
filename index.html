@@ -493,6 +493,7 @@ li span {
         <option value="Claim only">Claim only</option>
         <option value="Claim + task">Claim + Task</option>
         <option value="Claim + play">Claim + Play</option>
+        <option value="Checkbox">Checkbox</option>
         <option value="Sementara">Sementara</option>
     </select>
 
@@ -558,14 +559,16 @@ li span {
 
                     snapshot.forEach((childSnapshot) => {
                         const data = childSnapshot.val();
+                        const groups = Array.isArray(data.group) ? data.group : [data.group];
+
                         if (data.nama.toLowerCase().includes(searchQuery) &&
-                            (selectedGroup === '' || data.group === selectedGroup)) {
+                            (selectedGroup === '' || groups.includes(selectedGroup))) {
 
                             const listItem = document.createElement('li');
                             listItem.innerHTML =
                                 `<span>Nama: ${data.nama}</span>
-                                <span>Nomor: ${data.nomor}</span>
-                                <span class="timer"></span>`;
+                        <span>Nomor: ${data.nomor}</span>
+                        <span class="timer"></span>`;
                             const timerSpan = listItem.querySelector('.timer');
 
                             // Append the checkbox
@@ -576,7 +579,7 @@ li span {
                             checkbox.style.width = '20px'; // Set width
                             checkbox.style.height = '20px'; // Set height
                             checkbox.addEventListener('change', () => {
-                                updateCheckbox(childSnapshot.key, checkbox.checked);
+                                updateCheckboxAndMoveGroup(childSnapshot.key, checkbox.checked);
                             });
                             listItem.appendChild(checkbox);
 
@@ -619,7 +622,6 @@ li span {
                             imageContainer.appendChild(image);
                             listItem.appendChild(imageContainer);
 
-
                             // Append the note input (as a text input)
                             const noteInput = document.createElement('input');
                             noteInput.type = 'text';
@@ -640,7 +642,9 @@ li span {
                                 option.text = group;
                                 groupDropdown.appendChild(option);
                             });
-                            groupDropdown.value = data.group || 'Group 1'; // Set current group
+
+                            // Set the value of the dropdown to the first group the data is part of
+                            groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara', 'Checkbox'].includes(group)) || 'Tap hand';
                             listItem.appendChild(groupDropdown);
 
                             // Append the move button
@@ -709,14 +713,7 @@ li span {
             });
         });
 
-        // Update checkbox state in Firebase
-        function updateCheckbox(key, checked) {
-            const updates = {};
-            updates[`/users/${key}/checked`] = checked;
-            update(ref(database), updates).catch((error) => {
-                console.error('Gagal memperbarui checkbox: ', error);
-            });
-        }
+
 
         // Edit data in Firebase
         // Function to open the modal and populate the inputs with current values
@@ -820,6 +817,43 @@ li span {
         function deleteData(key) {
             remove(ref(database, 'users/' + key)).catch((error) => {
                 console.error('Gagal menghapus data: ', error);
+            });
+        }
+
+        // Update checkbox state and move to a different group in Firebase
+        function updateCheckboxAndMoveGroup(key, checked) {
+            const userRef = ref(database, `/users/${key}`);
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    let groups = userData.group || [];
+                    groups = Array.isArray(groups) ? groups : [groups];
+
+                    if (checked) {
+                        // Tambahkan "Checkbox" ke grup jika belum ada
+                        if (!groups.includes('Checkbox')) {
+                            groups.push('Checkbox');
+                            alert('Data berhasil masuk ke dalam grup Checkbox');
+                        }
+                    } else {
+                        // Hapus "Checkbox" dari grup
+                        groups = groups.filter(group => group !== 'Checkbox');
+                    }
+
+                    const updates = {};
+                    updates[`/users/${key}/checked`] = checked;
+                    updates[`/users/${key}/group`] = groups;
+
+                    update(ref(database), updates).then(() => {
+                        fetchData(); // Refresh data
+                    }).catch((error) => {
+                        console.error('Gagal memperbarui checkbox atau memindahkan data: ', error);
+                    });
+                } else {
+                    console.error('Data tidak ditemukan untuk kunci: ', key);
+                }
+            }).catch((error) => {
+                console.error('Gagal membaca data: ', error);
             });
         }
 
