@@ -441,7 +441,7 @@ li span {
     </style>
 <body>
 
-
+    <div id="countdown"></div>
 
     <div id="editNoteModal" style="display:none;">
         <div>
@@ -497,6 +497,10 @@ li span {
         <option value="Sementara">Sementara</option>
     </select>
 
+    <div id="lastClickedData">
+    </div>
+
+    <!-- <div id="dataCount"></div> -->
     <ul id="dataList"></ul>
 
     <button id="scrollToTopBtn" class="scroll-button scroll-to-top">Scroll to Top</button>
@@ -544,11 +548,46 @@ li span {
             fetchData();
         });
 
-        // Function to fetch and display data from Firebase
+        let globalAttempts = {}; // Object to store attempts for each data item
+
+        function startCountdownMidnight() {
+            const display = document.getElementById('countdown');
+
+            function updateCountdown() {
+                const now = new Date();
+                const midnight = new Date();
+                midnight.setHours(22, 50, 0, 0); // Jam 00:00:00 hari berikutnya
+
+                if (now.getTime() >= midnight.getTime()) {
+                    midnight.setDate(midnight.getDate() + 1);
+                }
+
+                const timeRemaining = midnight - now;
+                const seconds = Math.floor((timeRemaining / 1000) % 60);
+                const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
+                const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
+
+                display.textContent = `Sisa waktu: ${hours} jam ${minutes} menit ${seconds} detik`;
+
+                if (hours === 0 && minutes === 0 && seconds === 0) {
+                    // Reset all attempts in Firebase
+                    resetAttemptsAtMidnight();
+                    console.log('All attempts have been reset to 0 at midnight');
+                }
+
+                setTimeout(updateCountdown, 1000);
+            }
+
+            updateCountdown();
+        }
+
+        let lastClickedData = null;
+
         function fetchData() {
             const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             const selectedGroup = document.getElementById('groupSelect').value;
             const dbRef = ref(database);
+
             get(child(dbRef, 'users')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const dataList = document.getElementById('dataList');
@@ -565,23 +604,19 @@ li span {
                             (selectedGroup === '' || groups.includes(selectedGroup))) {
 
                             const listItem = document.createElement('li');
-                            listItem.innerHTML =
-                                `<span>Nama: ${data.nama}</span>
-                        <span>Nomor: ${data.nomor}</span>
-                        <span class="timer"></span>`;
-                            const timerSpan = listItem.querySelector('.timer');
+                            const dataKey = childSnapshot.key;
 
-                            // Append the checkbox
-                            const checkbox = document.createElement('input');
-                            checkbox.classList.add('form-checkbox');
-                            checkbox.type = 'checkbox';
-                            checkbox.checked = data.checked || false; // Default to unchecked if not present in data
-                            checkbox.style.width = '20px'; // Set width
-                            checkbox.style.height = '20px'; // Set height
-                            checkbox.addEventListener('change', () => {
-                                updateCheckboxAndMoveGroup(childSnapshot.key, checkbox.checked);
-                            });
-                            listItem.appendChild(checkbox);
+                            listItem.innerHTML = `
+                        <span class="attempts-count">Attempts: ${data.attempts || 0}</span><br>
+                        <span>Nama: ${data.nama}</span>
+                        <span>Nomor: ${data.nomor}</span>
+                        <span class="timer"></span>
+                        <a href="${data.link}" target="_blank" class="reset-button">Link Telegram</a>
+                    `;
+
+                            const timerSpan = listItem.querySelector('.timer');
+                            const attemptsSpan = listItem.querySelector('.attempts-count');
+                            // const link = listItem.querySelector('.reset-button');
 
                             // Append the edit button
                             const editButton = document.createElement('button');
@@ -591,15 +626,6 @@ li span {
                                 editData(childSnapshot.key, data.nomor, data.nama, data.link); // Edit data in Firebase
                             });
                             listItem.appendChild(editButton);
-
-                            // Append the reset button
-                            const resetButton = document.createElement('button');
-                            resetButton.classList.add('reset-button');
-                            resetButton.textContent = 'Link Telegram';
-                            resetButton.addEventListener('click', () => {
-                                resetTimer(childSnapshot.key, data.link); // Reset timer for this data entry and open link
-                            });
-                            listItem.appendChild(resetButton);
 
                             // Append the delete button
                             const deleteButton = document.createElement('button');
@@ -613,14 +639,47 @@ li span {
                             });
                             listItem.appendChild(deleteButton);
 
-                            // Append the image element
-                            const imageContainer = document.createElement('div');
-                            imageContainer.classList.add('image-container');
-                            const image = document.createElement('img');
-                            image.src = 'green.png';
-                            image.style.display = 'none'; // Initially hidden
-                            imageContainer.appendChild(image);
-                            listItem.appendChild(imageContainer);
+                            // Append the checkbox
+                            const checkbox = document.createElement('input');
+                            checkbox.classList.add('form-checkbox');
+                            checkbox.type = 'checkbox';
+                            checkbox.checked = data.checked || false; // Default to unchecked if not present in data
+                            checkbox.style.width = '20px'; // Set width
+                            checkbox.style.height = '20px'; // Set height
+                            checkbox.style.marginLeft = '30px'; // Set margin-left
+                            checkbox.addEventListener('change', () => {
+                                updateCheckboxAndMoveGroup(childSnapshot.key, checkbox.checked);
+                            });
+                            listItem.appendChild(checkbox);
+
+                            // Append the link click event listener
+                            const link = listItem.querySelector('.reset-button');
+                            link.addEventListener('click', (event) => {
+                                event.preventDefault(); // Prevent default link behavior
+
+                                // Save the last clicked data
+                                lastClickedData = {
+                                    attempts: (data.attempts || 0) + 1,
+                                    nama: data.nama,
+                                    nomor: data.nomor,
+                                    link: data.link,
+                                    key: dataKey // Save the key
+                                };
+                                localStorage.setItem('lastClickedData', JSON.stringify(lastClickedData));
+
+                                // Update attempts in Firebase
+                                update(ref(database, 'users/' + dataKey), {
+                                    attempts: lastClickedData.attempts
+                                }).then(() => {
+                                    // Update attempts display
+                                    listItem.querySelector('.attempts-count').textContent = `Attempts: ${lastClickedData.attempts}`;
+                                }).catch((error) => {
+                                    console.error('Failed to update attempts: ', error);
+                                });
+
+                                // Perform other actions if needed
+                                DataResetTimer(dataKey, data.link); // Custom function for resetting timer if needed
+                            });
 
                             // Append the note input (as a text input)
                             const noteInput = document.createElement('input');
@@ -656,38 +715,46 @@ li span {
                             });
                             listItem.appendChild(moveButton);
 
-                            // Start or resume countdown timer
+                            const imageContainer = document.createElement('div');
+                            imageContainer.classList.add('image-container');
+                            const image = document.createElement('img');
+                            image.src = 'green.png';
+                            image.style.display = 'none';
+                            imageContainer.appendChild(image);
+                            listItem.appendChild(imageContainer);
+
                             const now = Date.now();
                             const timestamp = data.timestamp || now;
                             const timePassed = now - timestamp;
-                            const countdownMinutes = data.nomor * 60 - Math.floor(timePassed / 1000);
+                            const DataCountdownMinutes = data.nomor * 60 - Math.floor(timePassed / 1000);
 
-                            if (countdownMinutes <= 0) {
+                            if (DataCountdownMinutes <= 0) {
                                 expiredItems.push(listItem);
                             } else {
                                 activeItems.push(listItem);
                             }
 
-                            startTimer(countdownMinutes, timerSpan, image);
+                            DataStartTimer(DataCountdownMinutes, listItem.querySelector('.timer'), listItem.querySelector('img'), listItem.querySelector('.attempts-count'), dataKey);
                         }
                     });
 
-                    // Update the data count
                     dataCount.textContent = snapshot.size;
 
-                    // Display expired items first
                     expiredItems.forEach(item => dataList.appendChild(item));
-                    // Display active items
                     activeItems.forEach(item => dataList.appendChild(item));
+
+                    // Display last clicked data if available
+                    displayLastClickedData();
                 } else {
                     console.log('No data available');
-                    // Update the data count
                     document.getElementById('dataCount').textContent = '0';
                 }
             }).catch((error) => {
-                console.error('Gagal membaca data: ', error);
+                console.error('Failed to read data: ', error);
             });
         }
+
+
 
         // Handle form submission
         document.getElementById('dataForm').addEventListener('submit', function (event) {
@@ -714,8 +781,6 @@ li span {
         });
 
 
-
-        // Edit data in Firebase
         // Function to open the modal and populate the inputs with current values
         function editData(key, nomor, nama, link) {
             document.getElementById('editNomor').value = nomor;
@@ -798,21 +863,6 @@ li span {
         document.querySelector('#editModal button[onclick="closeModal()"]').addEventListener('click', closeModal);
 
 
-
-
-        // Function to reset timer and open link in a new tab
-        function resetTimer(key, link) {
-            const dataRef = ref(database, 'users/' + key);
-            update(dataRef, {
-                timestamp: Date.now() // Reset the timestamp
-            }).then(() => {
-                window.open(link, '_blank');
-                fetchData(); // Refresh the data list
-            }).catch((error) => {
-                console.error('Gagal me-reset timer: ', error);
-            });
-        }
-
         // Delete data from Firebase
         function deleteData(key) {
             remove(ref(database, 'users/' + key)).catch((error) => {
@@ -869,9 +919,72 @@ li span {
             });
         }
 
-        // Function to start countdown timer
-        function startTimer(minutes, displayElement, imageElement) {
+
+        function displayLastClickedData() {
+            const lastClickedContainer = document.getElementById('lastClickedData');
+            const storedData = localStorage.getItem('lastClickedData');
+            if (lastClickedContainer && storedData) {
+                const data = JSON.parse(storedData);
+                lastClickedContainer.innerHTML = `
+            <li style="list-style:none">
+                <span class="attempts-count">Attempts: ${data.attempts}</span><br>
+                <span>Nama: ${data.nama}</span>
+                <span>Nomor: ${data.nomor}</span>
+                <span class="timer"></span>
+                <a href="${data.link}" target="_blank" class="reset-button">Link Telegram</a>
+            </li>
+        `;
+
+                // Add event listener to the link to update attempts count
+                const link = lastClickedContainer.querySelector('.reset-button');
+
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default link behavior
+
+                    // Update attempts count in localStorage
+                    data.attempts = (data.attempts || 0) + 1;
+                    localStorage.setItem('lastClickedData', JSON.stringify(data));
+
+                    // Update attempts count in Firebase
+                    const dataKey = data.key; // Use the key saved in localStorage
+                    update(ref(database, 'users/' + dataKey), {
+                        attempts: data.attempts
+                    }).then(() => {
+                        // Update attempts display after successful update
+                        const attemptsSpan = lastClickedContainer.querySelector('.attempts-count');
+                        attemptsSpan.textContent = `Attempts: ${data.attempts}`;
+
+                        // Reset timer for this data entry and save to localStorage
+                        DataResetTimer(dataKey, data.link);
+                    }).catch((error) => {
+                        console.error('Failed to update attempts: ', error);
+                    });
+                });
+            }
+        }
+
+
+
+
+        function DataResetTimer(key, link) {
+            const dataRef = ref(database, 'users/' + key);
+            update(dataRef, {
+                timestamp: Date.now()
+            }).then(() => {
+                window.open(link, '_blank');
+                fetchData();
+            }).catch((error) => {
+                console.error('Gagal me-reset timer: ', error);
+            });
+        }
+
+        function DataStartTimer(minutes, displayElement, imageElement, attemptsSpan, dataKey) {
             let timer = minutes;
+            displayElement.addEventListener('click', () => {
+                globalAttempts[dataKey]++;
+                attemptsSpan.textContent = `Attempts: ${globalAttempts[dataKey]}`;
+            });
+
             const countdown = setInterval(() => {
                 const minutes = Math.floor(timer / 60);
                 const seconds = timer % 60;
@@ -880,10 +993,33 @@ li span {
                 if (--timer < 0) {
                     clearInterval(countdown);
                     displayElement.textContent = 'Waktu habis!';
-                    imageElement.style.display = 'block'; // Show the image when time is up
+                    imageElement.style.display = 'block';
                 }
             }, 1000);
         }
+
+        function resetAttemptsAtMidnight() {
+            const dbRef = ref(database, 'users');
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const dataKey = childSnapshot.key;
+                        update(ref(database, 'users/' + dataKey), {
+                            attempts: 0
+                        }).catch((error) => {
+                            console.error('Gagal me-reset attempts: ', error);
+                        });
+                    });
+
+                    // Clear the localStorage attempts data
+                    localStorage.removeItem('lastClickedData');
+                }
+            }).catch((error) => {
+                console.error('Gagal membaca data untuk reset: ', error);
+            });
+        }
+
+
 
         // Tambahkan kode untuk tombol scroll
         document.getElementById('scrollToBottomBtn').addEventListener('click', function () {
@@ -920,8 +1056,14 @@ li span {
         document.getElementById('reloadButton').addEventListener('click', function () {
             location.reload();
         });
-        // Initial data fetch
-        fetchData();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            startCountdownMidnight();
+            fetchData();
+            displayLastClickedData();
+        });
+
+
     </script>
 </body>
 
