@@ -556,7 +556,7 @@ li span {
             function updateCountdown() {
                 const now = new Date();
                 const midnight = new Date();
-                midnight.setHours(15, 18, 0, 0); // Jam 00:00:00 hari berikutnya
+                midnight.setHours(15, 22, 0, 0); // Jam 00:00:00 hari berikutnya
 
                 if (now.getTime() >= midnight.getTime()) {
                     midnight.setDate(midnight.getDate() + 1);
