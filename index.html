@@ -7,7 +7,7 @@
     <title>Form Data to Firebase</title>
     <link rel="stylesheet" href="style1.css">
     <style>
-        body {
+body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
@@ -358,13 +358,15 @@ li span {
     left: 50%; /* Center horizontally */
     transform: translate(-50%, -50%); /* Adjust for perfect centering */
     width: 90%; /* Width relative to the viewport */
-    max-width: 400px; /* Maximum width */
+    max-width: 600px; /* Increased maximum width */
     background-color: #fff; /* White background */
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for floating effect */
     padding: 20px; /* Inner padding */
     z-index: 1000; /* Ensure it appears above other elements */
     box-sizing: border-box; /* Ensure padding is included in width calculations */
+    overflow-y: auto; /* Enable vertical scroll if content is too long */
+    max-height: 80vh; /* Limit the maximum height to 80% of the viewport height */
 }
 
 /* Style for each form group */
@@ -433,6 +435,7 @@ li span {
 #editNoteModal button:last-child:hover {
     background-color: #d32f2f; /* Darker red on hover */
 }
+
 
 .link-item {
     margin-bottom: 10px;
@@ -533,6 +536,7 @@ select option {
 select option:hover {
     background-color: #f1f1f1; /* Latar belakang saat hover pada item dropdown */
 }
+
 
     </style>
 </head>
