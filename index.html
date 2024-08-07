@@ -7,7 +7,7 @@
     <title>Form Data to Firebase</title>
     <link rel="stylesheet" href="style4.css">
     <style>
-        body {
+body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
@@ -488,6 +488,31 @@ li span {
     text-shadow: 0 0 1px black; /* Garis hitam tetap muncul saat bintang dipilih */
 }
 
+.select-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Optional: adds space between selects */
+}
+
+.select-container select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    flex: 1;
+    min-width: 150px; /* Optional: sets a minimum width */
+}
+
+@media (max-width: 600px) {
+    .select-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .select-container select {
+        max-width: 100%; /* Ensures selects take up full width */
+    }
+}
+
     </style>
 </head>
 
@@ -544,9 +569,6 @@ li span {
 
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
 
-    <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
-    <button id="startButton" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;"
-        onclick="startCountdown()">Mulai</button>
 
     <div id="editNoteModal" style="display:none;">
         <div>
@@ -564,29 +586,34 @@ li span {
 
     <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
 
-    <div id="filterGroup"
-        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-        <select id="filterSelect" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-            <option value="all">Semua</option>
-            <option value="zero">Attempts Nol</option>
-        </select>
-        <select id="groupSelect" class="group-dropdown"
-            style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-            <option value="">Semua Grup</option>
-            <option value="Tap hand">Tap Hand</option>
-            <option value="Tap bot">Tap Bot</option>
-            <option value="Claim only">Claim only</option>
-            <option value="Claim + task">Claim + Task</option>
-            <option value="Claim + play">Claim + Play</option>
-            <option value="Checkbox">Checkbox</option>
-            <option value="Sementara">Sementara</option>
-        </select>
-        <select id="filterStarSelect" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-            <option value="all">Semua</option>
-            <option value="star-1">Bintang 1</option>
-            <option value="star-2">Bintang 2</option>
-            <option value="star-3">Bintang 3</option>
-        </select>
+    <div id="filterGroup">
+        <div>
+            <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
+            <button id="startButton" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;"
+                onclick="startCountdown()">Mulai</button>
+        </div>
+        <div class="select-container">
+            <select id="filterSelect">
+                <option value="all">Semua</option>
+                <option value="zero">Attempts Nol</option>
+            </select>
+            <select id="groupSelect" class="group-dropdown">
+                <option value="">Semua Grup</option>
+                <option value="Tap hand">Tap Hand</option>
+                <option value="Tap bot">Tap Bot</option>
+                <option value="Claim only">Claim only</option>
+                <option value="Claim + task">Claim + Task</option>
+                <option value="Claim + play">Claim + Play</option>
+                <option value="Checkbox">Checkbox</option>
+                <option value="Sementara">Sementara</option>
+            </select>
+            <select id="filterStarSelect">
+                <option value="all">Semua</option>
+                <option value="star-1">Bintang 1</option>
+                <option value="star-2">Bintang 2</option>
+                <option value="star-3">Bintang 3</option>
+            </select>
+        </div>
     </div>
 
     <!-- Tombol untuk menggulir ke bawah -->
