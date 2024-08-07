@@ -241,6 +241,27 @@ li span {
     align-items: center;
 }
 
+.form-checkbox-supportToDesktop {
+    position: absolute;
+    top: 255px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    appearance: none; /* Remove default checkbox styling */
+    width: 20px;
+    height: 20px;
+    border: 2px solid grey; /* Border color */
+    background-color: white; /* Background color */
+    cursor: pointer;
+    border-radius: 3px; /* Optional: rounded corners */
+}
+
+/* Style for the checkbox when it is checked */
+.form-checkbox-supportToDesktop:checked {
+    background-color: grey; /* Background color when checked */
+    border-color: grey; /* Border color when checked */
+}
+
 .scroll-button {
     position: fixed;
     padding: 10px 20px;
@@ -494,6 +515,17 @@ li span {
     gap: 10px; /* Optional: adds space between selects */
 }
 
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px; /* Ensures a minimum width for each filter item */
+}
+
+.filter-item label {
+    margin-bottom: 5px; /* Space between label and select */
+}
+
 .select-container select {
     padding: 10px;
     border-radius: 5px;
@@ -512,6 +544,7 @@ li span {
         max-width: 100%; /* Ensures selects take up full width */
     }
 }
+
 
     </style>
 </head>
@@ -593,28 +626,48 @@ li span {
                 onclick="startCountdown()">Mulai</button>
         </div>
         <div class="select-container">
-            <select id="filterSelect">
-                <option value="all">Semua</option>
-                <option value="zero">Attempts Nol</option>
-            </select>
-            <select id="groupSelect" class="group-dropdown">
-                <option value="">Semua Grup</option>
-                <option value="Tap hand">Tap Hand</option>
-                <option value="Tap bot">Tap Bot</option>
-                <option value="Claim only">Claim only</option>
-                <option value="Claim + task">Claim + Task</option>
-                <option value="Claim + play">Claim + Play</option>
-                <option value="Checkbox">Checkbox</option>
-                <option value="Sementara">Sementara</option>
-            </select>
-            <select id="filterStarSelect">
-                <option value="all">Semua</option>
-                <option value="star-1">Bintang 1</option>
-                <option value="star-2">Bintang 2</option>
-                <option value="star-3">Bintang 3</option>
-            </select>
+            <div class="filter-item">
+                <label for="filterSelect">Filter Attempts:</label>
+                <select id="filterSelect">
+                    <option value="all">Semua</option>
+                    <option value="zero">Attempts Nol</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label for="groupSelect">Filter Group:</label>
+                <select id="groupSelect" class="group-dropdown">
+                    <option value="">Semua Grup</option>
+                    <option value="Tap hand">Tap Hand</option>
+                    <option value="Tap bot">Tap Bot</option>
+                    <option value="Claim only">Claim only</option>
+                    <option value="Claim + task">Claim + Task</option>
+                    <option value="Claim + play">Claim + Play</option>
+                    <option value="Checkbox">Checkbox</option>
+                    <option value="Sementara">Sementara</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label for="filterStarSelect">Filter Star:</label>
+                <select id="filterStarSelect">
+                    <option value="all">Semua</option>
+                    <option value="star-1">Bintang 1</option>
+                    <option value="star-2">Bintang 2</option>
+                    <option value="star-3">Bintang 3</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label for="filterSupportDesktopSelect">Filter Desktop Support:</label>
+                <select id="filterSupportDesktopSelect">
+                    <option value="all">Semua</option>
+                    <option value="SupportDesktop">Support Desktop</option>
+                </select>
+            </div>
         </div>
     </div>
+
 
     <!-- Tombol untuk menggulir ke bawah -->
     <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
@@ -667,6 +720,7 @@ li span {
             const storedGroup = localStorage.getItem('selectedGroup');
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
+            const storedSupportDesktop = localStorage.getItem('filterSupportDesktop')
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
@@ -678,6 +732,10 @@ li span {
 
             if (storedFilterStar) {
                 document.getElementById('filterStarSelect').value = storedFilterStar;
+            }
+
+            if (storedSupportDesktop) {
+                document.getElementById('filterSupportDesktopSelect').value = storedSupportDesktop;
             }
 
             fetchData();
@@ -698,6 +756,12 @@ li span {
             localStorage.setItem('filterStar', this.value);
             fetchData();
         });
+
+        document.getElementById('filterSupportDesktopSelect').addEventListener('change', function () {
+            localStorage.setItem('filterSupportDesktop', this.value);
+            fetchData();
+        });
+
 
 
         let globalAttempts = {}; // Object to store attempts for each data item
@@ -784,6 +848,7 @@ li span {
             const selectedGroup = document.getElementById('groupSelect').value;
             const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
+            const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
             const dbRef = ref(database);
 
             // Get last clicked key from localStorage or Firebase
@@ -811,7 +876,11 @@ li span {
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
 
-                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar) {
+                        // Logic for matchesSupportDesktop
+                        const matchesSupportDesktop = filterSupportDesktop === 'all' ||
+                            !filterSupportDesktop || data.supportToDesktop === true;
+
+                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop) {
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
 
@@ -951,6 +1020,17 @@ li span {
                             groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara', 'Checkbox'].includes(group)) || 'Tap hand';
 
                             listItem.appendChild(groupDropdown);
+
+                            // Checkbox creation for supportToDesktop
+                            const supportToDesktopCheckbox = document.createElement('input');
+                            supportToDesktopCheckbox.classList.add('form-checkbox-supportToDesktop');
+                            supportToDesktopCheckbox.type = 'checkbox';
+                            supportToDesktopCheckbox.checked = data.supportToDesktop || false;
+                            supportToDesktopCheckbox.style.marginLeft = '30px';
+                            supportToDesktopCheckbox.addEventListener('change', () => {
+                                updateSupportToDesktopInFirebase(childSnapshot.key, supportToDesktopCheckbox.checked);
+                            });
+                            listItem.appendChild(supportToDesktopCheckbox);
 
 
                             // Append the move button without additional styles
@@ -1288,6 +1368,20 @@ li span {
                 console.error('Gagal memindahkan data: ', error);
             });
         }
+
+
+        // Function to update Firebase with alert
+        function updateSupportToDesktopInFirebase(key, isChecked) {
+            const dbRef = ref(database, 'users/' + key);
+            update(dbRef, {
+                supportToDesktop: isChecked
+            }).then(() => {
+                alert('Support to Desktop status successfully updated in Firebase!');
+            }).catch((error) => {
+                console.error('Error updating Support to Desktop status:', error);
+            });
+        }
+
 
 
         function DataResetTimer(key, link) {
