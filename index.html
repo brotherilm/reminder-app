@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
-    <link rel="stylesheet" href="style1.css">
+    <link rel="stylesheet" href="style4.css">
     <style>
-body {
+        body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     padding: 20px;
@@ -22,7 +22,6 @@ h1 {
 
 /* General Styles for Form Elements */
 .form-search,
-.group-dropdown,
 .note-input {
     width: calc(100% - 16px); /* Adjust width to match padding */
     padding: 14px;
@@ -36,7 +35,6 @@ h1 {
 }
 /* General Styles for Form Elements */
 .form-search,
-.group-dropdown,
 .note-input {
     width: calc(100% - 16px); /* Adjust width to match padding */
     padding: 14px;
@@ -50,21 +48,10 @@ h1 {
 }
 
 .form-search:focus,
-.group-dropdown:focus,
 .note-input:focus {
     border-color: #4CAF50;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
     outline: none;
-}
-
-/* Specific Styles for the Dropdown */
-.group-dropdown {
-    appearance: none; /* Remove default dropdown arrow */
-    background-image: linear-gradient(45deg, transparent 50%, #666 50%),
-                      linear-gradient(135deg, #666 50%, transparent 50%);
-    background-position: calc(100% - 16px) center;
-    background-size: 12px 12px;
-    background-repeat: no-repeat;
 }
 
 /* Read-only Styles for Note Input */
@@ -162,45 +149,7 @@ h4 {
     outline: none;
 }
 
-/* Dropdown Group Styles */
-.group-dropdown-container {
-    margin: 20px auto;
-    max-width: 400px;
-}
 
-.group-dropdown {
-    width: calc(100% - 16px); /* Adjust for padding */
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    box-sizing: border-box;
-    font-size: 16px;
-    appearance: none; /* Remove default arrow */
-    transition: border-color 0.3s;
-}
-
-.group-dropdown:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
-
-/* Dropdown arrow */
-.group-dropdown-container::after {
-    content: '▼';
-    font-size: 14px;
-    color: #666;
-    position: absolute;
-    right: 16px;
-    top: calc(50% - 6px);
-    pointer-events: none;
-}
-
-.group-dropdown-container {
-    position: relative;
-    width: calc(100% - 16px); /* Adjust for padding */
-    max-width: 400px;
-}
 
 /* Form Button */
 #searchForm button {
@@ -481,68 +430,68 @@ li span {
     transform: scale(1.1); /* Slightly larger on hover */
 }
 
-/* Mengatur gaya dasar untuk select */
-select {
-    appearance: none; /* Menghilangkan tampilan default browser */
-    width: 250px; /* Atur lebar select */
-    padding: 12px 15px; /* Padding di dalam select */
-    font-size: 18px; /* Ukuran font */
-    color: #444; /* Warna teks */
-    background-color: #fafafa; /* Warna latar belakang */
-    border: 1px solid #ccc; /* Border abu-abu */
-    border-radius: 6px; /* Sudut border membulat */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Bayangan halus */
-    cursor: pointer; /* Kursor tangan saat hover */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Transisi halus */
+/* General styles for the line break */
+.line-break {
+    width: 100%; /* Full width */
+    border-top: 1px solid #ccc; /* Light gray border */
+    margin: 10px 0; /* Top and bottom margin */
+    box-sizing: border-box; /* Ensure padding and border are included in width and height */
 }
 
-/* Mengatur gaya saat hover pada select */
-select:hover {
-    border-color: #aaa; /* Border saat hover */
+/* Responsive styles */
+@media (min-width: 768px) {
+    /* For tablets and larger screens (web) */
+    .line-break {
+        border-top: 1px solid #ccc; /* Border on top for web */
+        margin: 10px 0; /* Vertical margin */
+    }
 }
 
-/* Mengatur gaya saat fokus pada select */
-select:focus {
-    outline: none; /* Menghilangkan outline default */
-    border-color: #007bff; /* Border saat fokus */
-    box-shadow: 0 0 0 4px rgba(38, 143, 255, 0.2); /* Bayangan fokus */
+@media (max-width: 767px) {
+    /* For mobile screens (Android) */
+    .line-break {
+        border-left: 1px solid #ccc; /* Border on the left for mobile */
+        height: 100%; /* Full height of the parent element */
+        margin: 0; /* No margin */
+        display: inline-block; /* Ensure it appears next to the content */
+    }
 }
 
-/* Menambahkan panah kustom di dalam select */
-.select-container {
-    position: relative;
+.rating {
     display: inline-block;
+    font-size: 2em;
+    cursor: pointer;
+    direction: ltr; /* Menyusun bintang dari kiri ke kanan */
+    position: relative;
+    margin-top: -15px;
+    margin-bottom: -18px;
 }
 
-.select-container::after {
-    content: '▾'; /* Simbol panah */
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    pointer-events: none; /* Menghindari interaksi */
-    font-size: 18px;
-    color: #888;
+.star {
+    color: white;
+    transition: color 0.3s;
+    display: inline-block;
+    position: relative;
+    text-shadow: 0 0 1px black; /* Garis hitam pada bintang */
 }
 
-/* Mengatur gaya dropdown menu */
-select option {
-    font-size: 18px; /* Ukuran font untuk item dropdown */
-    padding: 12px 15px; /* Padding untuk item dropdown */
-    background-color: #fff; /* Warna latar belakang item dropdown */
-    border-bottom: 1px solid #eee; /* Border bawah item dropdown */
+/* Menampilkan warna kuning pada bintang yang di-hover dan yang ada di sebelah kiri */
+.rating .star.hover,
+.rating .star.hover ~ .star {
+    color: gold; /* Warna bintang saat hover */
+    text-shadow: 0 0 1px black; /* Garis hitam tetap muncul saat hover */
 }
 
-select option:hover {
-    background-color: #f1f1f1; /* Latar belakang saat hover pada item dropdown */
+/* Warna saat bintang dipilih */
+.star.selected {
+    color: gold;
+    text-shadow: 0 0 1px black; /* Garis hitam tetap muncul saat bintang dipilih */
 }
-
 
     </style>
 </head>
 
 <body>
-
 
     <div id="editNoteModal" class="modal">
         <div class="modal-content">
@@ -593,42 +542,55 @@ select option:hover {
     </div>
 
 
-
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
 
-    <div id="countdown"></div>
+    <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
+    <button id="startButton" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;"
+        onclick="startCountdown()">Mulai</button>
+
+    <div id="editNoteModal" style="display:none;">
+        <div>
+            <label for="editNote">Edit Note:</label>
+            <input type="text" id="editNote">
+        </div>
+        <button onclick="submitEditNote()">Submit</button>
+        <button onclick="closeNoteModal()">Cancel</button>
+    </div>
 
     <div style="display: flex; justify-content: space-between;">
         <h3>Total Data: <span id="dataCount">0</span></h3>
         <button id="reloadButton">Reload</button>
     </div>
- 
 
-    <select id="filterSelect">
-        <option value="all">Semua</option>
-        <option value="zero">Attempts Nol</option>
-    </select>
+    <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
 
-
+    <div id="filterGroup"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+        <select id="filterSelect" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="all">Semua</option>
+            <option value="zero">Attempts Nol</option>
+        </select>
+        <select id="groupSelect" class="group-dropdown"
+            style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="">Semua Grup</option>
+            <option value="Tap hand">Tap Hand</option>
+            <option value="Tap bot">Tap Bot</option>
+            <option value="Claim only">Claim only</option>
+            <option value="Claim + task">Claim + Task</option>
+            <option value="Claim + play">Claim + Play</option>
+            <option value="Checkbox">Checkbox</option>
+            <option value="Sementara">Sementara</option>
+        </select>
+        <select id="filterStarSelect" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="all">Semua</option>
+            <option value="star-1">Bintang 1</option>
+            <option value="star-2">Bintang 2</option>
+            <option value="star-3">Bintang 3</option>
+        </select>
+    </div>
 
     <!-- Tombol untuk menggulir ke bawah -->
     <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
-
-    <!-- Dropdown for selecting groups -->
-    <h4>Pilih Grup:</h4>
-    <select id="groupSelect" class="group-dropdown">
-        <option value="">Semua Grup</option>
-        <option value="Tap hand">Tap Hand</option>
-        <option value="Tap bot">Tap Bot</option>
-        <option value="Claim only">Claim only</option>
-        <option value="Claim + task">Claim + Task</option>
-        <option value="Claim + play">Claim + Play</option>
-        <option value="Checkbox">Checkbox</option>
-        <option value="Sementara">Sementara</option>
-    </select>
-
-    <div id="lastClickedData">
-    </div>
 
     <!-- <div id="dataCount"></div> -->
     <ul id="dataList"></ul>
@@ -668,14 +630,16 @@ select option:hover {
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        //fitur search nama data
         document.getElementById('searchInput').addEventListener('input', function () {
             fetchData();
         });
 
+        //fitur filter data attempts
         document.addEventListener('DOMContentLoaded', function () {
-            // Retrieve stored values and apply them
             const storedGroup = localStorage.getItem('selectedGroup');
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
+            const storedFilterStar = localStorage.getItem('filterStar');
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
@@ -685,7 +649,10 @@ select option:hover {
                 document.getElementById('filterSelect').value = storedFilterAttempts;
             }
 
-            // Fetch data after applying stored selections
+            if (storedFilterStar) {
+                document.getElementById('filterStarSelect').value = storedFilterStar;
+            }
+
             fetchData();
         });
 
@@ -696,77 +663,138 @@ select option:hover {
         });
 
         document.getElementById('filterSelect').addEventListener('change', function () {
-            // Store the selected value in localStorage
             localStorage.setItem('filterAttempts', this.value);
             fetchData();
         });
+
+        document.getElementById('filterStarSelect').addEventListener('change', function () {
+            localStorage.setItem('filterStar', this.value);
+            fetchData();
+        });
+
+
         let globalAttempts = {}; // Object to store attempts for each data item
 
-        function startCountdownMidnight() {
-            const display = document.getElementById('countdown');
+        let countdownInterval;
+        const display = document.getElementById('countdown');
+        const startButton = document.getElementById('startButton');
+
+        // Firebase reference
+        const timerRef = ref(database, 'timer/endTime');
+
+        function startCountdown() {
+            const now = new Date();
+            const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+
+            // Simpan endTime ke Firebase
+            set(timerRef, endTime.toISOString());
+
+            resetAttemptsInDatabase();
+
+            startButton.disabled = true; // Disable the button
+
+            // Menampilkan alert ketika timer dimulai
+            alert('Timer dimulai! Waktu tersisa 24 jam.');
 
             function updateCountdown() {
                 const now = new Date();
-                const midnight = new Date();
-                midnight.setHours(15, 22, 0, 0); // Jam 00:00:00 hari berikutnya
+                const timeRemaining = new Date(endTime) - now;
 
-                if (now.getTime() >= midnight.getTime()) {
-                    midnight.setDate(midnight.getDate() + 1);
+                if (timeRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    display.textContent = 'Sisa waktu: 0 jam 0 menit 0 detik';
+                    alert('Countdown selesai!');
+                    startButton.disabled = false; // Enable the button
+                    remove(timerRef); // Remove endTime from Firebase after countdown is over
+                    return;
                 }
 
-                const timeRemaining = midnight - now;
                 const seconds = Math.floor((timeRemaining / 1000) % 60);
                 const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
                 const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
 
                 display.textContent = `Sisa waktu: ${hours} jam ${minutes} menit ${seconds} detik`;
-
-                if (hours === 0 && minutes === 0 && seconds === 0) {
-                    // Reset all attempts in Firebase
-                    resetAttemptsAtMidnight();
-                    console.log('All attempts have been reset to 0 at midnight');
-                }
-
-                setTimeout(updateCountdown, 1000);
             }
 
-            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Initial call to display the countdown immediately
         }
 
-        let lastClickedData = null;
+
+        const stars = document.querySelectorAll('.rating .star');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function () {
+                const value = parseInt(this.getAttribute('data-value'));
+                stars.forEach(s => {
+                    if (parseInt(s.getAttribute('data-value')) <= value) {
+                        s.classList.add('hover');
+                    } else {
+                        s.classList.remove('hover');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseout', function () {
+                stars.forEach(s => s.classList.remove('hover'));
+            });
+
+            star.addEventListener('click', function () {
+                stars.forEach(s => s.classList.remove('selected'));
+                const value = parseInt(this.getAttribute('data-value'));
+                stars.forEach(s => {
+                    if (parseInt(s.getAttribute('data-value')) <= value) {
+                        s.classList.add('selected');
+                    }
+                });
+            });
+        });
+
+        let lastClickedKey = null; // Variabel untuk menyimpan kunci item terakhir yang diklik
 
         function fetchData() {
             const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             const selectedGroup = document.getElementById('groupSelect').value;
-            const filterAttempts = document.getElementById('filterSelect').value; // Ambil nilai filter attempts
+            const filterAttempts = document.getElementById('filterSelect').value;
+            const filterStar = document.getElementById('filterStarSelect').value;
             const dbRef = ref(database);
 
+            // Get last clicked key from localStorage or Firebase
+            const lastClickedKey = localStorage.getItem('lastClickedKey'); // Replace with Firebase logic if needed
 
             get(child(dbRef, 'users')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const dataList = document.getElementById('dataList');
                     const dataCount = document.getElementById('dataCount');
-                    dataList.innerHTML = ''; // Clear existing data
+                    dataList.innerHTML = '';
+
                     const expiredItems = [];
                     const activeItems = [];
+                    let lastClickedItem = null;
 
                     snapshot.forEach((childSnapshot) => {
                         const data = childSnapshot.val();
                         const groups = Array.isArray(data.group) ? data.group : [data.group];
 
-
-                        // Logika filter
                         const matchesSearch = data.nama.toLowerCase().includes(searchQuery);
                         const matchesGroup = selectedGroup === '' || groups.includes(selectedGroup);
                         const matchesAttempts = filterAttempts === 'all' || (filterAttempts === 'zero' && data.attempts === 0);
+                        const matchesStar = filterStar === 'all' ||
+                            (filterStar === 'star-1' && data.rating === 1) ||
+                            (filterStar === 'star-2' && data.rating === 2) ||
+                            (filterStar === 'star-3' && data.rating === 3);
 
-                        if (matchesSearch && matchesGroup && matchesAttempts) {
-
+                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar) {
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
 
                             listItem.innerHTML = `
-                        <span class="attempts-count">Attempts: ${data.attempts || 0}</span><br>
+                            <div class="rating" data-key="${dataKey}">
+                                <span class="star" data-value="1">&#9733;</span>
+                                <span class="star" data-value="2">&#9733;</span>
+                                <span class="star" data-value="3">&#9733;</span>
+                            </div>
+                        <span class="attempts-count">Attempts: ${data.attempts || 0}</span>
                         <span>Nama: ${data.nama}</span>
                         <span>Nomor: ${data.nomor}</span>
                         <span class="timer"></span>
@@ -775,84 +803,116 @@ select option:hover {
 
                             const timerSpan = listItem.querySelector('.timer');
                             const attemptsSpan = listItem.querySelector('.attempts-count');
+                            const ratingContainer = listItem.querySelector('.rating');
 
-                            // Append the edit button
+                            // Set rating awal
+                            const currentRating = data.rating || 0;
+                            ratingContainer.querySelectorAll('.star').forEach((star, index) => {
+                                if (index < currentRating) {
+                                    star.classList.add('selected');
+                                } else {
+                                    star.classList.remove('selected');
+                                }
+                            });
+
+                            // Menangani klik pada bintang
+                            ratingContainer.querySelectorAll('.star').forEach(star => {
+                                star.addEventListener('click', () => {
+                                    const ratingValue = parseInt(star.getAttribute('data-value'), 10);
+                                    const stars = ratingContainer.querySelectorAll('.star');
+
+                                    // Set rating baru
+                                    stars.forEach((s, index) => {
+                                        if (index < ratingValue) {
+                                            s.classList.add('selected');
+                                        } else {
+                                            s.classList.remove('selected');
+                                        }
+                                    });
+
+                                    // Simpan rating ke Firebase
+                                    update(ref(database, 'users/' + dataKey), {
+                                        rating: ratingValue
+                                    }).then(() => {
+                                        console.log('Rating berhasil disimpan: ', ratingValue);
+                                    }).catch((error) => {
+                                        console.error('Gagal menyimpan rating: ', error);
+                                    });
+                                });
+                            });
+
                             const editButton = document.createElement('button');
                             editButton.classList.add('edit-button');
                             editButton.textContent = 'Edit';
                             editButton.addEventListener('click', () => {
-                                editData(childSnapshot.key, data.nomor, data.nama, data.link); // Edit data in Firebase
+                                editData(childSnapshot.key, data.nomor, data.nama, data.link);
                             });
                             listItem.appendChild(editButton);
 
-                            // Append the delete button
                             const deleteButton = document.createElement('button');
                             deleteButton.classList.add('delete-button');
                             deleteButton.textContent = 'Hapus';
                             deleteButton.addEventListener('click', () => {
                                 const confirmDelete = confirm('Apakah Anda yakin ingin menghapus data ini?');
                                 if (confirmDelete) {
-                                    deleteData(childSnapshot.key); // Delete data from Firebase
+                                    deleteData(childSnapshot.key);
                                 }
                             });
                             listItem.appendChild(deleteButton);
 
-                            // Append the checkbox
                             const checkbox = document.createElement('input');
                             checkbox.classList.add('form-checkbox');
                             checkbox.type = 'checkbox';
-                            checkbox.checked = data.checked || false; // Default to unchecked if not present in data
-                            checkbox.style.width = '20px'; // Set width
-                            checkbox.style.height = '20px'; // Set height
-                            checkbox.style.marginLeft = '30px'; // Set margin-left
+                            checkbox.checked = data.checked || false;
+                            checkbox.style.width = '20px';
+                            checkbox.style.height = '20px';
+                            checkbox.style.marginLeft = '30px';
                             checkbox.addEventListener('change', () => {
                                 updateCheckboxAndMoveGroup(childSnapshot.key, checkbox.checked);
                             });
                             listItem.appendChild(checkbox);
 
-                            // Append the link click event listener
                             const link = listItem.querySelector('.reset-button');
                             link.addEventListener('click', (event) => {
                                 event.preventDefault(); // Prevent default link behavior
 
-                                // Save the last clicked data
-                                lastClickedData = {
-                                    attempts: (data.attempts || 0) + 1,
-                                    nama: data.nama,
-                                    nomor: data.nomor,
-                                    link: data.link,
-                                    key: dataKey // Save the key
-                                };
-                                localStorage.setItem('lastClickedData', JSON.stringify(lastClickedData));
-
-                                // Update attempts in Firebase
+                                const updatedAttempts = (data.attempts || 0) + 1;
                                 update(ref(database, 'users/' + dataKey), {
-                                    attempts: lastClickedData.attempts
+                                    attempts: updatedAttempts
                                 }).then(() => {
-                                    // Update attempts display
-                                    listItem.querySelector('.attempts-count').textContent = `Attempts: ${lastClickedData.attempts}`;
+                                    listItem.querySelector('.attempts-count').textContent = `Attempts: ${updatedAttempts}`;
                                 }).catch((error) => {
                                     console.error('Failed to update attempts: ', error);
                                 });
 
-                                // Perform other actions if needed
-                                DataResetTimer(dataKey, data.link); // Custom function for resetting timer if needed
+                                localStorage.setItem('lastClickedKey', dataKey);
+
+                                DataResetTimer(dataKey, data.link);
                             });
 
                             // Append the note input (as a text input)
                             const noteInput = document.createElement('input');
                             noteInput.type = 'text';
                             noteInput.classList.add('note-input');
+
+                            // Add inline style to match the group dropdown, with no margin between elements
+                            noteInput.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 0;';
                             noteInput.value = data.note;
-                            noteInput.readOnly = true; // Make the input read-only
+                            noteInput.readOnly = true;
+
                             noteInput.addEventListener('click', () => {
                                 noteData(childSnapshot.key, data.note, data.bigNote, data.nama); // Sertakan nama
                             });
+
                             listItem.appendChild(noteInput);
 
                             // Append the group dropdown
                             const groupDropdown = document.createElement('select');
                             groupDropdown.classList.add('group-dropdown');
+
+                            // Add inline style for full width, matching the note input
+                            groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 0;';
+
                             ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara'].forEach(group => {
                                 const option = document.createElement('option');
                                 option.value = group;
@@ -862,9 +922,11 @@ select option:hover {
 
                             // Set the value of the dropdown to the first group the data is part of
                             groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara', 'Checkbox'].includes(group)) || 'Tap hand';
+
                             listItem.appendChild(groupDropdown);
 
-                            // Append the move button
+
+                            // Append the move button without additional styles
                             const moveButton = document.createElement('button');
                             moveButton.classList.add('move-button');
                             moveButton.textContent = 'Move to Group';
@@ -886,7 +948,9 @@ select option:hover {
                             const timePassed = now - timestamp;
                             const DataCountdownMinutes = data.nomor * 60 - Math.floor(timePassed / 1000);
 
-                            if (DataCountdownMinutes <= 0) {
+                            if (dataKey === lastClickedKey) {
+                                lastClickedItem = listItem;
+                            } else if (DataCountdownMinutes <= 0) {
                                 expiredItems.push(listItem);
                             } else {
                                 activeItems.push(listItem);
@@ -896,13 +960,22 @@ select option:hover {
                         }
                     });
 
-                    dataCount.textContent = snapshot.size;
+                    // Add a line break before adding expired and active items
+                    if (lastClickedItem) {
+                        dataList.appendChild(lastClickedItem);
+
+                        // Create a flexible line break (border) with inline style
+                        const lineBreak = document.createElement('div');
+                        lineBreak.classList.add('line-break'); // Add a class for styling
+                        dataList.appendChild(lineBreak);
+                    }
 
                     expiredItems.forEach(item => dataList.appendChild(item));
                     activeItems.forEach(item => dataList.appendChild(item));
 
-                    // Display last clicked data if available
-                    displayLastClickedData();
+                    dataCount.textContent = snapshot.size;
+
+
                 } else {
                     console.log('No data available');
                     document.getElementById('dataCount').textContent = '0';
@@ -911,6 +984,33 @@ select option:hover {
                 console.error('Failed to read data: ', error);
             });
         }
+
+        const filterGroup = document.getElementById('filterGroup');
+        const hideGroupButton = document.getElementById('hide-group');
+
+        // Check localStorage for saved state
+        const savedState = localStorage.getItem('filterGroupHidden');
+
+        if (savedState === 'true') {
+            filterGroup.style.display = 'none';
+            hideGroupButton.textContent = 'Unhide';
+        } else {
+            filterGroup.style.display = 'grid';
+            hideGroupButton.textContent = 'Hide';
+        }
+
+        hideGroupButton.addEventListener('click', () => {
+            if (filterGroup.style.display === 'none') {
+                filterGroup.style.display = 'grid';
+                hideGroupButton.textContent = 'Hide';
+                localStorage.setItem('filterGroupHidden', 'false');
+            } else {
+                filterGroup.style.display = 'none';
+                hideGroupButton.textContent = 'Unhide';
+                localStorage.setItem('filterGroupHidden', 'true');
+            }
+        });
+
 
         // Handle form submission
         document.getElementById('dataForm').addEventListener('submit', function (event) {
@@ -1163,50 +1263,6 @@ select option:hover {
         }
 
 
-        function displayLastClickedData() {
-            const lastClickedContainer = document.getElementById('lastClickedData');
-            const storedData = localStorage.getItem('lastClickedData');
-            if (lastClickedContainer && storedData) {
-                const data = JSON.parse(storedData);
-                lastClickedContainer.innerHTML = `
-        <div style="border-bottom: 5px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
-            <li style="list-style: none;">
-                <span class="attempts-count">Attempts: ${data.attempts}</span><br>
-                <span>Nama: ${data.nama}</span>
-                <span>Nomor: ${data.nomor}</span>
-                <span class="timer"></span>
-                <a href="${data.link}" target="_blank" class="reset-button">Link Telegram</a>
-            </li>
-        </div>`;
-
-                // Add event listener to the link to update attempts count
-                const link = lastClickedContainer.querySelector('.reset-button');
-
-                link.addEventListener('click', (event) => {
-                    event.preventDefault(); // Prevent default link behavior
-
-                    // Update attempts count in localStorage
-                    data.attempts = (data.attempts || 0) + 1;
-                    localStorage.setItem('lastClickedData', JSON.stringify(data));
-
-                    // Update attempts count in Firebase
-                    const dataKey = data.key; // Use the key saved in localStorage
-                    update(ref(database, 'users/' + dataKey), {
-                        attempts: data.attempts
-                    }).then(() => {
-                        // Update attempts display after successful update
-                        const attemptsSpan = lastClickedContainer.querySelector('.attempts-count');
-                        attemptsSpan.textContent = `Attempts: ${data.attempts}`;
-
-                        // Reset timer for this data entry and save to localStorage
-                        DataResetTimer(dataKey, data.link);
-                    }).catch((error) => {
-                        console.error('Failed to update attempts: ', error);
-                    });
-                });
-            }
-        }
-
         function DataResetTimer(key, link) {
             const dataRef = ref(database, 'users/' + key);
             update(dataRef, {
@@ -1238,29 +1294,6 @@ select option:hover {
                 }
             }, 1000);
         }
-
-        function resetAttemptsAtMidnight() {
-            const dbRef = ref(database, 'users');
-            get(dbRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const dataKey = childSnapshot.key;
-                        update(ref(database, 'users/' + dataKey), {
-                            attempts: 0
-                        }).catch((error) => {
-                            console.error('Gagal me-reset attempts: ', error);
-                        });
-                    });
-
-                    // Clear the localStorage attempts data
-                    localStorage.removeItem('lastClickedData');
-                }
-            }).catch((error) => {
-                console.error('Gagal membaca data untuk reset: ', error);
-            });
-        }
-
-
 
         // Tambahkan kode untuk tombol scroll
         document.getElementById('scrollToBottomBtn').addEventListener('click', function () {
@@ -1298,10 +1331,72 @@ select option:hover {
             location.reload();
         });
 
+        function resetAttemptsInDatabase() {
+            const dbRef = ref(database, 'users');
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const dataKey = childSnapshot.key;
+
+                        // Update each user's attempts to 0
+                        update(ref(database, 'users/' + dataKey), {
+                            attempts: 0
+                        });
+                    });
+                    console.log('All attempts have been reset to 0');
+                }
+            }).catch((error) => {
+                console.error('Failed to reset attempts: ', error);
+            });
+        }
+
+        // Function to continue countdown if endTime is already in Firebase
+        function continueCountdown() {
+            get(timerRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const endTime = new Date(snapshot.val());
+                    const now = new Date();
+                    const timeRemaining = endTime - now;
+
+                    if (timeRemaining > 0) {
+                        startButton.disabled = true; // Disable the button
+                        countdownInterval = setInterval(() => {
+                            const now = new Date();
+                            const timeRemaining = endTime - now;
+
+                            if (timeRemaining <= 0) {
+                                clearInterval(countdownInterval);
+                                display.textContent = 'Sisa waktu: 0 jam 0 menit 0 detik';
+                                alert('Countdown selesai!');
+                                startButton.disabled = false; // Enable the button
+                                remove(timerRef); // Remove endTime from Firebase after countdown is over
+                                return;
+                            }
+
+                            const seconds = Math.floor((timeRemaining / 1000) % 60);
+                            const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
+                            const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
+
+                            display.textContent = `Sisa waktu: ${hours} jam ${minutes} menit ${seconds} detik`;
+                        }, 1000);
+                    } else {
+                        // Timer has already finished
+                        remove(timerRef); // Remove endTime from Firebase
+                    }
+                }
+            }).catch((error) => {
+                console.error('Failed to get endTime from Firebase: ', error);
+            });
+        }
+
+        // Check if there is an existing countdown
+        continueCountdown();
+
+        // Event listener for the start button
+        startButton.addEventListener('click', startCountdown);
+
         document.addEventListener('DOMContentLoaded', () => {
-            startCountdownMidnight();
             fetchData();
-            displayLastClickedData();
         });
 
 
