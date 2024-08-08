@@ -616,6 +616,11 @@ li span {
         <h3>Total Data: <span id="dataCount">0</span></h3>
         <button id="reloadButton">Reload</button>
     </div>
+    <div style="display: flex;">
+        <div id="countData" style="margin-right: 10px;"></div>
+        <div id="countTimerOut" style="margin-right: 10px;"></div>
+        <div id="TimerRunning" style="margin-right: 10px;"></div>
+    </div>
 
     <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
 
@@ -854,6 +859,10 @@ li span {
             // Get last clicked key from localStorage or Firebase
             const lastClickedKey = localStorage.getItem('lastClickedKey'); // Replace with Firebase logic if needed
 
+            // Inisialisasi counter untuk menghitung data yang ditampilkan
+            let countDisplayedData = 0;
+            let countTimerOut = 0;
+
             get(child(dbRef, 'users')).then((snapshot) => {
                 if (snapshot.exists()) {
                     const dataList = document.getElementById('dataList');
@@ -875,12 +884,11 @@ li span {
                             (filterStar === 'star-1' && data.rating === 1) ||
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
-
-                        // Logic for matchesSupportDesktop
                         const matchesSupportDesktop = filterSupportDesktop === 'all' ||
                             !filterSupportDesktop || data.supportToDesktop === true;
 
                         if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop) {
+                            countDisplayedData++;
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
 
@@ -1059,6 +1067,7 @@ li span {
                                 lastClickedItem = listItem;
                             } else if (DataCountdownMinutes <= 0) {
                                 expiredItems.push(listItem);
+                                countTimerOut++;
                             } else {
                                 activeItems.push(listItem);
                             }
@@ -1087,6 +1096,19 @@ li span {
                     console.log('No data available');
                     document.getElementById('dataCount').textContent = '0';
                 }
+
+
+                // Tampilkan total data yang ditampilkan
+                document.getElementById('countData').textContent = `Displayed: ${countDisplayedData}`;
+
+                // Tampilkan jumlah data yang waktunya telah habis
+                document.getElementById('countTimerOut').textContent = `(Expired: ${countTimerOut}`;
+
+                // Tampilkan jumlah data yang waktunya masih berjalan
+                const TimerRunning = countDisplayedData - countTimerOut;
+                document.getElementById('TimerRunning').textContent = `Running: ${TimerRunning})`;
+
+
             }).catch((error) => {
                 console.error('Failed to read data: ', error);
             });
