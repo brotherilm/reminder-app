@@ -712,10 +712,13 @@ li span {
 
             <div class="filter-item">
                 <label for="filterSupportDesktopSelect">Filter Support:</label>
-                <select id="filterSupportSelect">
+                <select id="filterSupportDesktopSelect">
                     <option value="all">Semua</option>
                     <option value="SupportDesktop">Support Desktop</option>
                     <option value="NoSupportDesktop">No Support Desktop</option>
+                </select>
+                <select id="filterSupportEmulatorSelect">
+                    <option value="all">Semua</option>
                     <option value="SupportEmulator">Better In Mobile</option>
                     <option value="NoSupportEmulator">Better In Emulator</option>
                 </select>
@@ -723,9 +726,6 @@ li span {
         </div>
 
     </div>
-
-
-
 
     <!-- Tombol untuk menggulir ke bawah -->
     <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
@@ -778,7 +778,8 @@ li span {
             const storedGroup = localStorage.getItem('selectedGroup');
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
-            const storedSupportFilter = localStorage.getItem('filterSupport');
+            const storedSupportDesktop = localStorage.getItem('filterSupportDesktop');
+            const storedSupportEmulator = localStorage.getItem('filterSupportEmulator');
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
@@ -792,8 +793,12 @@ li span {
                 document.getElementById('filterStarSelect').value = storedFilterStar;
             }
 
-            if (storedSupportFilter) {
-                document.getElementById('filterSupportSelect').value = storedSupportFilter;
+            if (storedSupportDesktop) {
+                document.getElementById('filterSupportDesktopSelect').value = storedSupportDesktop;
+            }
+
+            if (storedSupportEmulator) {
+                document.getElementById('filterSupportEmulatorSelect').value = storedSupportEmulator;
             }
 
             fetchData();
@@ -816,8 +821,13 @@ li span {
         });
 
         // Save selected filter to localStorage and fetch data
-        document.getElementById('filterSupportSelect').addEventListener('change', function () {
-            localStorage.setItem('filterSupport', this.value);
+        document.getElementById('filterSupportDesktopSelect').addEventListener('change', function () {
+            localStorage.setItem('filterSupportDesktop', this.value);
+            fetchData(); // Call your data fetching function
+        });
+
+        document.getElementById('filterSupportEmulatorSelect').addEventListener('change', function () {
+            localStorage.setItem('filterSupportEmulator', this.value);
             fetchData(); // Call your data fetching function
         });
 
@@ -918,7 +928,8 @@ li span {
             const selectedGroup = document.getElementById('groupSelect').value;
             const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
-            const filterSupport = document.getElementById('filterSupportSelect').value;
+            const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
+            const filterSupportEmulator = document.getElementById('filterSupportEmulatorSelect').value;
 
             const dbRef = ref(database);
 
@@ -951,21 +962,24 @@ li span {
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
                         // Check if data matches the filters
-                        const matchesSupport = filterSupport === 'all' ||
-                            (filterSupport === 'SupportDesktop' && data.supportToDesktop === true) ||
-                            (filterSupport === 'NoSupportDesktop' &&
+                        const matchesSupportDesktop = filterSupportDesktop === 'all' ||
+                            (filterSupportDesktop === 'SupportDesktop' && data.supportToDesktop === true) ||
+                            (filterSupportDesktop === 'NoSupportDesktop' &&
                                 (data.supportToDesktop === false ||
                                     data.supportToDesktop === '' ||
                                     data.supportToDesktop === undefined)
-                            ) ||
-                            (filterSupport === 'SupportEmulator' && data.supportToEmulator === true) ||
-                            (filterSupport === 'NoSupportEmulator' &&
+                            );
+
+                        const matchesSupportEmulator = filterSupportEmulator === 'all' ||
+                            (filterSupportEmulator === 'SupportEmulator' && data.supportToEmulator === true) ||
+                            (filterSupportEmulator === 'NoSupportEmulator' &&
                                 (data.supportToEmulator === false ||
                                     data.supportToEmulator === '' ||
-                                    data.supportToEmulator === undefined))
+                                    data.supportToEmulator === undefined)
+                            );
 
                         // Combine all conditions
-                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupport) {
+                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
                             countDisplayedData++;
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
