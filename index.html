@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
     <link rel="stylesheet" href="style4.css">
-    <style>
+<style>
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -567,7 +567,29 @@ li span {
     }
 }
 
-    </style>
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#overlayCard {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+
+</style>
 </head>
 
 <body>
@@ -643,14 +665,18 @@ li span {
         <div id="TimerRunning" style="margin-right: 10px;"></div>
     </div>
 
+    <div id="overlay" style="display: none;">
+        <div id="overlayCard">
+            <p>Countdown telah selesai!</p>
+            <button id="closeOverlayButton" onclick="closeOverlay()">Mulai lagi</button>
+        </div>
+    </div>
+
+
     <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
 
     <div id="filterGroup">
-        <div>
-            <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
-            <button id="startButton" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;"
-                onclick="startCountdown()">Mulai</button>
-        </div>
+
         <div class="select-container">
             <div class="filter-item">
                 <label for="filterSelect">Filter Attempts:</label>
@@ -686,20 +712,19 @@ li span {
 
             <div class="filter-item">
                 <label for="filterSupportDesktopSelect">Filter Support:</label>
-                <select id="filterSupportDesktopSelect">
+                <select id="filterSupportSelect">
                     <option value="all">Semua</option>
                     <option value="SupportDesktop">Support Desktop</option>
                     <option value="NoSupportDesktop">No Support Desktop</option>
-                </select>
-                <select id="filterSupportEmulatorSelect">
-                    <option value="all">Semua</option>
                     <option value="SupportEmulator">Better In Mobile</option>
                     <option value="NoSupportEmulator">Better In Emulator</option>
                 </select>
-
             </div>
         </div>
+
     </div>
+
+
 
 
     <!-- Tombol untuk menggulir ke bawah -->
@@ -753,8 +778,7 @@ li span {
             const storedGroup = localStorage.getItem('selectedGroup');
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
-            const storedSupportDesktop = localStorage.getItem('filterSupportDesktop')
-            const storedSupportEmulator = localStorage.getItem('filterSupportEmulator')
+            const storedSupportFilter = localStorage.getItem('filterSupport');
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
@@ -768,14 +792,9 @@ li span {
                 document.getElementById('filterStarSelect').value = storedFilterStar;
             }
 
-            if (storedSupportDesktop) {
-                document.getElementById('filterSupportDesktopSelect').value = storedSupportDesktop;
+            if (storedSupportFilter) {
+                document.getElementById('filterSupportSelect').value = storedSupportFilter;
             }
-
-            if (storedSupportEmulator) {
-                document.getElementById('filterSupportEmulatorSelect').value = storedSupportEmulator;
-            }
-
 
             fetchData();
         });
@@ -797,13 +816,8 @@ li span {
         });
 
         // Save selected filter to localStorage and fetch data
-        document.getElementById('filterSupportDesktopSelect').addEventListener('change', function () {
-            localStorage.setItem('filterSupportDesktop', this.value);
-            fetchData(); // Call your data fetching function
-        });
-
-        document.getElementById('filterSupportEmulatorSelect').addEventListener('change', function () {
-            localStorage.setItem('filterSupportEmulator', this.value);
+        document.getElementById('filterSupportSelect').addEventListener('change', function () {
+            localStorage.setItem('filterSupport', this.value);
             fetchData(); // Call your data fetching function
         });
 
@@ -838,8 +852,7 @@ li span {
                 if (timeRemaining <= 0) {
                     clearInterval(countdownInterval);
                     display.textContent = 'Sisa waktu: 0 jam 0 menit 0 detik';
-                    alert('Countdown selesai!');
-                    startButton.disabled = false; // Enable the button
+                    showOverlay(); // Menampilkan card melayang
                     remove(timerRef); // Remove endTime from Firebase after countdown is over
                     return;
                 }
@@ -853,6 +866,19 @@ li span {
 
             countdownInterval = setInterval(updateCountdown, 1000);
             updateCountdown(); // Initial call to display the countdown immediately
+        }
+
+
+        function showOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'flex';
+            startButton.disabled = false; // Re-enable the button when countdown is over
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'none';
+            startCountdown(); // Restart the countdown when the overlay is closed
         }
 
 
@@ -892,8 +918,7 @@ li span {
             const selectedGroup = document.getElementById('groupSelect').value;
             const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
-            const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
-            const filterSupportEmulator = document.getElementById('filterSupportEmulatorSelect').value;
+            const filterSupport = document.getElementById('filterSupportSelect').value;
 
             const dbRef = ref(database);
 
@@ -926,24 +951,21 @@ li span {
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
                         // Check if data matches the filters
-                        const matchesSupportDesktop = filterSupportDesktop === 'all' ||
-                            (filterSupportDesktop === 'SupportDesktop' && data.supportToDesktop === true) ||
-                            (filterSupportDesktop === 'NoSupportDesktop' &&
+                        const matchesSupport = filterSupport === 'all' ||
+                            (filterSupport === 'SupportDesktop' && data.supportToDesktop === true) ||
+                            (filterSupport === 'NoSupportDesktop' &&
                                 (data.supportToDesktop === false ||
                                     data.supportToDesktop === '' ||
                                     data.supportToDesktop === undefined)
-                            );
-
-                        const matchesSupportEmulator = filterSupportEmulator === 'all' ||
-                            (filterSupportEmulator === 'SupportEmulator' && data.supportToEmulator === true) ||
-                            (filterSupportEmulator === 'NoSupportEmulator' &&
+                            ) ||
+                            (filterSupport === 'SupportEmulator' && data.supportToEmulator === true) ||
+                            (filterSupport === 'NoSupportEmulator' &&
                                 (data.supportToEmulator === false ||
                                     data.supportToEmulator === '' ||
-                                    data.supportToEmulator === undefined)
-                            );
+                                    data.supportToEmulator === undefined))
 
                         // Combine all conditions
-                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
+                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupport) {
                             countDisplayedData++;
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
