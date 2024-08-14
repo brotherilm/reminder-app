@@ -256,11 +256,33 @@ li span {
     border-radius: 3px; /* Optional: rounded corners */
 }
 
+.form-checkbox-supportToEmulator {
+    position: absolute;
+    top: 255px;
+    right: 45px;
+    display: flex;
+    align-items: center;
+    appearance: none; /* Remove default checkbox styling */
+    width: 20px;
+    height: 20px;
+    border: 2px solid cyan; /* Border color */
+    background-color: white; /* Background color */
+    cursor: pointer;
+    border-radius: 3px; /* Optional: rounded corners */
+}
+
 /* Style for the checkbox when it is checked */
 .form-checkbox-supportToDesktop:checked {
     background-color: grey; /* Background color when checked */
     border-color: grey; /* Border color when checked */
 }
+
+/* Style for the checkbox when it is checked */
+.form-checkbox-supportToEmulator:checked {
+    background-color: cyan; /* Background color when checked */
+    border-color: cyan; /* Border color when checked */
+}
+
 
 .scroll-button {
     position: fixed;
@@ -545,7 +567,6 @@ li span {
     }
 }
 
-
     </style>
 </head>
 
@@ -664,12 +685,18 @@ li span {
             </div>
 
             <div class="filter-item">
-                <label for="filterSupportDesktopSelect">Filter Desktop Support:</label>
+                <label for="filterSupportDesktopSelect">Filter Support:</label>
                 <select id="filterSupportDesktopSelect">
                     <option value="all">Semua</option>
                     <option value="SupportDesktop">Support Desktop</option>
                     <option value="NoSupportDesktop">No Support Desktop</option>
                 </select>
+                <select id="filterSupportEmulatorSelect">
+                    <option value="all">Semua</option>
+                    <option value="SupportEmulator">Better In Mobile</option>
+                    <option value="NoSupportEmulator">Better In Emulator</option>
+                </select>
+
             </div>
         </div>
     </div>
@@ -727,6 +754,7 @@ li span {
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
             const storedSupportDesktop = localStorage.getItem('filterSupportDesktop')
+            const storedSupportEmulator = localStorage.getItem('filterSupportEmulator')
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
@@ -743,6 +771,11 @@ li span {
             if (storedSupportDesktop) {
                 document.getElementById('filterSupportDesktopSelect').value = storedSupportDesktop;
             }
+
+            if (storedSupportEmulator) {
+                document.getElementById('filterSupportEmulatorSelect').value = storedSupportEmulator;
+            }
+
 
             fetchData();
         });
@@ -763,11 +796,16 @@ li span {
             fetchData();
         });
 
+        // Save selected filter to localStorage and fetch data
         document.getElementById('filterSupportDesktopSelect').addEventListener('change', function () {
             localStorage.setItem('filterSupportDesktop', this.value);
-            fetchData();
+            fetchData(); // Call your data fetching function
         });
 
+        document.getElementById('filterSupportEmulatorSelect').addEventListener('change', function () {
+            localStorage.setItem('filterSupportEmulator', this.value);
+            fetchData(); // Call your data fetching function
+        });
 
 
         let globalAttempts = {}; // Object to store attempts for each data item
@@ -855,6 +893,8 @@ li span {
             const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
             const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
+            const filterSupportEmulator = document.getElementById('filterSupportEmulatorSelect').value;
+
             const dbRef = ref(database);
 
             // Get last clicked key from localStorage or Firebase
@@ -885,15 +925,25 @@ li span {
                             (filterStar === 'star-1' && data.rating === 1) ||
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
+                        // Check if data matches the filters
                         const matchesSupportDesktop = filterSupportDesktop === 'all' ||
                             (filterSupportDesktop === 'SupportDesktop' && data.supportToDesktop === true) ||
                             (filterSupportDesktop === 'NoSupportDesktop' &&
                                 (data.supportToDesktop === false ||
                                     data.supportToDesktop === '' ||
                                     data.supportToDesktop === undefined)
-                            )
+                            );
 
-                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop) {
+                        const matchesSupportEmulator = filterSupportEmulator === 'all' ||
+                            (filterSupportEmulator === 'SupportEmulator' && data.supportToEmulator === true) ||
+                            (filterSupportEmulator === 'NoSupportEmulator' &&
+                                (data.supportToEmulator === false ||
+                                    data.supportToEmulator === '' ||
+                                    data.supportToEmulator === undefined)
+                            );
+
+                        // Combine all conditions
+                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
                             countDisplayedData++;
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
@@ -1047,6 +1097,18 @@ li span {
                             listItem.appendChild(supportToDesktopCheckbox);
 
 
+                            // Checkbox creation for supportToDesktop
+                            const supportToEmulatorCheckbox = document.createElement('input');
+                            supportToEmulatorCheckbox.classList.add('form-checkbox-supportToEmulator');
+                            supportToEmulatorCheckbox.type = 'checkbox';
+                            supportToEmulatorCheckbox.checked = data.supportToEmulator || false;
+                            supportToEmulatorCheckbox.style.marginLeft = '30px';
+                            supportToEmulatorCheckbox.addEventListener('change', () => {
+                                updateSupportToEmulatorInFirebase(childSnapshot.key, supportToEmulatorCheckbox.checked);
+                            });
+                            listItem.appendChild(supportToEmulatorCheckbox);
+
+
                             // Append the move button without additional styles
                             const moveButton = document.createElement('button');
                             moveButton.classList.add('move-button');
@@ -1145,7 +1207,6 @@ li span {
                 localStorage.setItem('filterGroupHidden', 'true');
             }
         });
-
 
         // Handle form submission
         document.getElementById('dataForm').addEventListener('submit', function (event) {
@@ -1407,6 +1468,30 @@ li span {
                 alert('Support to Desktop status successfully updated in Firebase!');
             }).catch((error) => {
                 console.error('Error updating Support to Desktop status:', error);
+            });
+        }
+
+        // Function to update Firebase with alert
+        function updateSupportToEmulatorInFirebase(key, isCheckedEmulator) {
+            const dbRef = ref(database, 'users/' + key);
+            update(dbRef, {
+                supportToEmulator: isCheckedEmulator
+            }).then(() => {
+                alert('Support to Emulator status successfully updated in Firebase!');
+            }).catch((error) => {
+                console.error('Error updating Support to Desktop status:', error);
+            });
+        }
+
+        // Function to update Firebase with alert for updateIconDone
+        function updateIconDone(key, isCheckeds) {
+            const dbRef = ref(database, 'users/' + key);
+            update(dbRef, {
+                IconDone: isCheckeds
+            }).then(() => {
+                alert('Icon status successfully updated in Firebase!');
+            }).catch((error) => {
+                console.error('Error updating Icon status:', error);
             });
         }
 
