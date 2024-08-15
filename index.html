@@ -958,9 +958,11 @@ li span {
                         const matchesGroup = selectedGroup === '' || groups.includes(selectedGroup);
                         const matchesAttempts = filterAttempts === 'all' || (filterAttempts === 'zero' && data.attempts === 0);
                         const matchesStar = filterStar === 'all' ||
+                            (filterStar === 'star-0' && (data.rating === 0 || data.rating === '' || data.rating === undefined)) ||
                             (filterStar === 'star-1' && data.rating === 1) ||
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
+
                         // Check if data matches the filters
                         const matchesSupportDesktop = filterSupportDesktop === 'all' ||
                             (filterSupportDesktop === 'SupportDesktop' && data.supportToDesktop === true) ||
