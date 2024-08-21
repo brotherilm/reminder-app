@@ -692,11 +692,11 @@ li span {
                     <option value="">Semua Grup</option>
                     <option value="Tap hand">Tap Hand</option>
                     <option value="Tap bot">Tap Bot</option>
+                    <option value="Tap infinity">Tap infinity</option>
                     <option value="Claim only">Claim only</option>
                     <option value="Claim + task">Claim + Task</option>
                     <option value="Claim + play">Claim + Play</option>
                     <option value="Checkbox">Checkbox</option>
-                    <option value="Sementara">Sementara</option>
                 </select>
             </div>
 
@@ -1112,7 +1112,7 @@ li span {
                             // Add inline style for full width, matching the note input
                             groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 0;';
 
-                            ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara'].forEach(group => {
+                            ['Tap hand', 'Tap bot', 'Tap infinity','Claim only', 'Claim + task', 'Claim + play'].forEach(group => {
                                 const option = document.createElement('option');
                                 option.value = group;
                                 option.text = group;
@@ -1120,7 +1120,7 @@ li span {
                             });
 
                             // Set the value of the dropdown to the first group the data is part of
-                            groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara', 'Checkbox'].includes(group)) || 'Tap hand';
+                            groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot','Tap infinity', 'Claim only', 'Claim + task', 'Claim + play', 'Checkbox'].includes(group)) || 'Tap hand';
 
                             listItem.appendChild(groupDropdown);
 
