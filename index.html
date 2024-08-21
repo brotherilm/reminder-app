@@ -644,7 +644,14 @@ li span {
 
 
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
-
+      <div>
+            <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
+            <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
+               font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+               box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
+                Mulai
+            </button>
+        </div>
 
     <div id="editNoteModal" style="display:none;">
         <div>
@@ -676,14 +683,6 @@ li span {
     <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
 
     <div id="filterGroup">
-        <div>
-            <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
-            <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
-               font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-               box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
-                Mulai
-            </button>
-        </div>
         <div class="select-container">
             <div class="filter-item">
                 <label for="filterSelect">Filter Attempts:</label>
