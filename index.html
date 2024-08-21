@@ -645,7 +645,7 @@ li span {
 
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
       <div>
-            <div id="countdown">Sisa waktu: 24 jam 0 menit 0 detik</div>
+            <div id="countdown">Reset Attempts: 24 jam 0 menit 0 detik</div>
             <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
                font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
@@ -850,7 +850,7 @@ li span {
 
         function startCountdown() {
             const now = new Date();
-            const endTime = new Date(now.getTime() + 1 * 60 * 1000); // 1 minute from now
+           const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
 
             // Simpan endTime ke Firebase
             set(timerRef, endTime.toISOString());
@@ -869,7 +869,7 @@ li span {
 
                 if (timeRemaining <= 0) {
                     clearInterval(countdownInterval);
-                    display.textContent = 'Sisa waktu: 0 jam 0 menit 0 detik';
+                    display.textContent = 'Reset Attempts: 0 jam 0 menit 0 detik';
                     alert('Countdown selesai!');
                     startButton.disabled = false; // Enable the button
                     startButton.style.display = 'block'; // Show the button again
