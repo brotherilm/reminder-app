@@ -644,14 +644,16 @@ li span {
 
 
     <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
-      <div>
-            <div id="countdown">Reset Attempts: 24 jam 0 menit 0 detik</div>
-            <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
-               font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-               box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
-                Mulai
-            </button>
-        </div>
+
+    <div>
+        <div id="countdown">Reset Attempts: 24 jam 0 menit 0 detik</div>
+        <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
+           font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
+            Mulai
+        </button>
+    </div>
+
 
     <div id="editNoteModal" style="display:none;">
         <div>
@@ -689,6 +691,9 @@ li span {
                 <select id="filterSelect">
                     <option value="all">Semua</option>
                     <option value="zero">Attempts Nol</option>
+                    <option value="Attempts 1">Attempts 1</option>
+                    <option value="Attempts 2">Attempts 2</option>
+                    <option value="Attempts 3++">Attempts 3++</option>
                 </select>
             </div>
 
@@ -698,11 +703,20 @@ li span {
                     <option value="">Semua Grup</option>
                     <option value="Tap hand">Tap Hand</option>
                     <option value="Tap bot">Tap Bot</option>
-                    <option value="Tap infinity">Tap infinity</option>
                     <option value="Claim only">Claim only</option>
                     <option value="Claim + task">Claim + Task</option>
                     <option value="Claim + play">Claim + Play</option>
                     <option value="Checkbox">Checkbox</option>
+                    <option value="Sementara">Sementara</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label for="AccountSelect">Filter Account:</label>
+                <select id="AccountSelect" class="group-dropdown">
+                    <option value="">Semua Grup</option>
+                    <option value="Account 1">Account 1</option>
+                    <option value="Account 2">Account 2</option>
                 </select>
             </div>
 
@@ -783,6 +797,7 @@ li span {
         //fitur filter data attempts
         document.addEventListener('DOMContentLoaded', function () {
             const storedGroup = localStorage.getItem('selectedGroup');
+            const storedAccount = localStorage.getItem('selectedAccount')
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
             const storedSupportDesktop = localStorage.getItem('filterSupportDesktop');
@@ -790,6 +805,10 @@ li span {
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
+            }
+
+            if (storedAccount) {
+                document.getElementById('AccountSelect').value = storedAccount;
             }
 
             if (storedFilterAttempts) {
@@ -817,6 +836,12 @@ li span {
             fetchData();
         });
 
+        document.getElementById('AccountSelect').addEventListener('change', function () {
+            // Store the selected value in localStorage
+            localStorage.setItem('selectedAccount', this.value);
+            fetchData();
+        });
+
         document.getElementById('filterSelect').addEventListener('change', function () {
             localStorage.setItem('filterAttempts', this.value);
             fetchData();
@@ -840,7 +865,6 @@ li span {
 
 
         let globalAttempts = {}; // Object to store attempts for each data item
-
         let countdownInterval;
         const display = document.getElementById('countdown');
         const startButton = document.getElementById('startButton');
@@ -850,7 +874,7 @@ li span {
 
         function startCountdown() {
             const now = new Date();
-           const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+            const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 minute from now
 
             // Simpan endTime ke Firebase
             set(timerRef, endTime.toISOString());
@@ -869,7 +893,7 @@ li span {
 
                 if (timeRemaining <= 0) {
                     clearInterval(countdownInterval);
-                    display.textContent = 'Reset Attempts: 0 jam 0 menit 0 detik';
+                    display.textContent = 'Sisa waktu: 0 jam 0 menit 0 detik';
                     alert('Countdown selesai!');
                     startButton.disabled = false; // Enable the button
                     startButton.style.display = 'block'; // Show the button again
@@ -966,6 +990,7 @@ li span {
         function fetchData() {
             const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             const selectedGroup = document.getElementById('groupSelect').value;
+            const selectedAccount = document.getElementById('AccountSelect').value;
             const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
             const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
@@ -993,35 +1018,56 @@ li span {
                     snapshot.forEach((childSnapshot) => {
                         const data = childSnapshot.val();
                         const groups = Array.isArray(data.group) ? data.group : [data.group];
+                        const accounts = Array.isArray(data.account) ? data.account : [data.account];
 
+                        // Check if the search query matches the name
                         const matchesSearch = data.nama.toLowerCase().includes(searchQuery);
+
+                        // Check if the selected group matches or if 'All Groups' is selected
                         const matchesGroup = selectedGroup === '' || groups.includes(selectedGroup);
-                        const matchesAttempts = filterAttempts === 'all' || (filterAttempts === 'zero' && data.attempts === 0);
+
+                        // Determine if the selectedAccount should include undefined values
+                        let matchesAccount;
+                        if (selectedAccount === '') {
+                            // No specific account selected, show all
+                            matchesAccount = true;
+                        } else if (selectedAccount === 'Account 1') {
+                            // Include 'Account 1' and undefined
+                            matchesAccount = accounts.includes(selectedAccount) || accounts.includes(undefined);
+                        } else {
+                            // Check if the account matches the selected value
+                            matchesAccount = accounts.includes(selectedAccount);
+                        }
+
+                        // Filter conditions for attempts
+                        const matchesAttempts = filterAttempts === 'all' || (filterAttempts === 'zero' && data.attempts === 0) ||
+                            (filterAttempts === 'Attempts 1' && data.attempts === 1) ||
+                            (filterAttempts === 'Attempts 2' && data.attempts === 2) ||
+                            (filterAttempts === 'Attempts 3++' && data.attempts > 2);
+
+                        // Filter conditions for star rating
                         const matchesStar = filterStar === 'all' ||
                             (filterStar === 'star-0' && (data.rating === 0 || data.rating === '' || data.rating === undefined)) ||
                             (filterStar === 'star-1' && data.rating === 1) ||
                             (filterStar === 'star-2' && data.rating === 2) ||
                             (filterStar === 'star-3' && data.rating === 3);
 
-                        // Check if data matches the filters
+                        // Filter conditions for support to desktop
                         const matchesSupportDesktop = filterSupportDesktop === 'all' ||
                             (filterSupportDesktop === 'SupportDesktop' && data.supportToDesktop === true) ||
                             (filterSupportDesktop === 'NoSupportDesktop' &&
-                                (data.supportToDesktop === false ||
-                                    data.supportToDesktop === '' ||
-                                    data.supportToDesktop === undefined)
+                                (data.supportToDesktop === false || data.supportToDesktop === '' || data.supportToDesktop === undefined)
                             );
 
+                        // Filter conditions for support to emulator
                         const matchesSupportEmulator = filterSupportEmulator === 'all' ||
                             (filterSupportEmulator === 'SupportEmulator' && data.supportToEmulator === true) ||
                             (filterSupportEmulator === 'NoSupportEmulator' &&
-                                (data.supportToEmulator === false ||
-                                    data.supportToEmulator === '' ||
-                                    data.supportToEmulator === undefined)
+                                (data.supportToEmulator === false || data.supportToEmulator === '' || data.supportToEmulator === undefined)
                             );
 
                         // Combine all conditions
-                        if (matchesSearch && matchesGroup && matchesAttempts && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
+                        if (matchesSearch && matchesGroup && matchesAccount && matchesAttempts && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
                             countDisplayedData++;
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
@@ -1144,14 +1190,18 @@ li span {
 
                             listItem.appendChild(noteInput);
 
+                            // Create a wrapper div for the dropdowns
+                            const dropdownWrapper = document.createElement('div');
+                            dropdownWrapper.style.display = 'flex';
+                            dropdownWrapper.style.gap = '10px'; // Optional: add space between dropdowns
+
                             // Append the group dropdown
                             const groupDropdown = document.createElement('select');
                             groupDropdown.classList.add('group-dropdown');
+                            groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
 
-                            // Add inline style for full width, matching the note input
-                            groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 0;';
-
-                            ['Tap hand', 'Tap bot', 'Tap infinity','Claim only', 'Claim + task', 'Claim + play'].forEach(group => {
+                            // Populate the group dropdown
+                            ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara'].forEach(group => {
                                 const option = document.createElement('option');
                                 option.value = group;
                                 option.text = group;
@@ -1159,9 +1209,33 @@ li span {
                             });
 
                             // Set the value of the dropdown to the first group the data is part of
-                            groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot','Tap infinity', 'Claim only', 'Claim + task', 'Claim + play', 'Checkbox'].includes(group)) || 'Tap hand';
+                            groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot', 'Claim only', 'Claim + task', 'Claim + play', 'Sementara', 'Checkbox'].includes(group)) || 'Tap hand';
 
-                            listItem.appendChild(groupDropdown);
+                            // Append the group dropdown to the wrapper
+                            dropdownWrapper.appendChild(groupDropdown);
+
+                            // Create the account dropdown
+                            const accountDropdown = document.createElement('select');
+                            accountDropdown.classList.add('group-dropdown');
+                            accountDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
+
+                            // Populate the account dropdown
+                            ['Account 1', 'Account 2'].forEach(account => {
+                                const option = document.createElement('option');
+                                option.value = account;
+                                option.text = account;
+                                accountDropdown.appendChild(option);
+                            });
+
+                            // Set the value of the account dropdown to the first matching account
+                            accountDropdown.value = accounts.find(account => ['Account 1', 'Account 2'].includes(account)) || 'Account 1';
+
+                            // Append the account dropdown to the wrapper
+                            dropdownWrapper.appendChild(accountDropdown);
+
+                            // Append the wrapper div to the listItem
+                            listItem.appendChild(dropdownWrapper);
+
 
                             // Checkbox creation for supportToDesktop
                             const supportToDesktopCheckbox = document.createElement('input');
@@ -1186,13 +1260,14 @@ li span {
                             });
                             listItem.appendChild(supportToEmulatorCheckbox);
 
-
-                            // Append the move button without additional styles
+                            // Single button for moving to a different group and account
                             const moveButton = document.createElement('button');
                             moveButton.classList.add('move-button');
                             moveButton.textContent = 'Move to Group';
                             moveButton.addEventListener('click', () => {
-                                moveToGroup(childSnapshot.key, groupDropdown.value);
+                                const selectedGroup = groupDropdown.value;
+                                const selectedAccount = accountDropdown.value;
+                                moveToGroupAndAccount(childSnapshot.key, selectedGroup, selectedAccount);
                             });
                             listItem.appendChild(moveButton);
 
@@ -1524,13 +1599,14 @@ li span {
             });
         }
 
-        // Move data to a different group
-        function moveToGroup(key, group) {
+        // Function to move data to a different group and account in Firebase
+        function moveToGroupAndAccount(key, group, account) {
             update(ref(database, 'users/' + key), {
-                group: group
+                group: group,
+                account: account
             }).then(() => {
                 fetchData(); // Refresh data
-                alert('Data berhasil dipindahkan ke grup ' + group); // Alert on successful move
+                alert('Data berhasil dipindahkan ke grup ' + group + ' dan account ' + account);
             }).catch((error) => {
                 console.error('Gagal memindahkan data: ', error);
             });
