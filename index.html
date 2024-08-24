@@ -701,12 +701,9 @@ li span {
                 <label for="groupSelect">Filter Group:</label>
                 <select id="groupSelect" class="group-dropdown">
                     <option value="">Semua Grup</option>
-                    <option value="Tap hand">Tap Hand</option>
                     <option value="Tap bot">Tap Bot</option>
-                    <option value="Tap infinty">Tap infinty</option>
                     <option value="Simple Play">Simple Play</option>
                     <option value="Stay / Ads">Stay / Ads</option>
-                    <option value="Claim + play">Claim + Play</option>
                     <option value="Checkbox">Checkbox</option>
                 </select>
             </div>
@@ -1204,7 +1201,7 @@ li span {
                             groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
 
                             // Populate the group dropdown
-                            ['Tap hand', 'Tap bot', 'Tap infinty','Simple Play', 'Stay / Ads', 'Claim + play'].forEach(group => {
+                            ['Tap bot','Simple Play', 'Stay / Ads','Checkbox'].forEach(group => {
                                 const option = document.createElement('option');
                                 option.value = group;
                                 option.text = group;
@@ -1212,7 +1209,7 @@ li span {
                             });
 
                             // Set the value of the dropdown to the first group the data is part of
-                            groupDropdown.value = groups.find(group => ['Tap hand', 'Tap bot','Tap infinty', 'Simple Play', 'Stay / Ads', 'Claim + play','Checkbox'].includes(group)) || 'Tap hand';
+                            groupDropdown.value = groups.find(group => ['Tap bot','Simple Play', 'Stay / Ads','Checkbox'].includes(group)) || 'Tap hand';
 
                             // Append the group dropdown to the wrapper
                             dropdownWrapper.appendChild(groupDropdown);
