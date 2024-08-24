@@ -703,7 +703,7 @@ li span {
                     <option value="">Semua Grup</option>
                     <option value="Tap bot">Tap Bot</option>
                     <option value="Simple Play">Simple Play</option>
-                    <option value="Stay / Ads">Stay / Ads</option>
+                    <option value="Stay">Stay</option>
                     <option value="Checkbox">Checkbox</option>
                 </select>
             </div>
@@ -1201,7 +1201,7 @@ li span {
                             groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
 
                             // Populate the group dropdown
-                            ['Tap bot','Simple Play', 'Stay / Ads'].forEach(group => {
+                            ['Tap bot','Simple Play', 'Stay'].forEach(group => {
                                 const option = document.createElement('option');
                                 option.value = group;
                                 option.text = group;
@@ -1209,7 +1209,7 @@ li span {
                             });
 
                             // Set the value of the dropdown to the first group the data is part of
-                            groupDropdown.value = groups.find(group => ['Tap bot','Simple Play', 'Stay / Ads','Checkbox'].includes(group)) || 'Tap hand';
+                            groupDropdown.value = groups.find(group => ['Tap bot','Simple Play', 'Stay','Checkbox'].includes(group)) || 'Tap hand';
 
                             // Append the group dropdown to the wrapper
                             dropdownWrapper.appendChild(groupDropdown);
