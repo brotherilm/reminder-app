@@ -728,6 +728,7 @@ li span {
                     <option value="star-1">Bintang 1</option>
                     <option value="star-2">Bintang 2</option>
                     <option value="star-3">Bintang 3</option>
+                    <option value="star-4">Bintang 4</option>
                 </select>
             </div>
 
@@ -1050,7 +1051,8 @@ li span {
                             (filterStar === 'star-0' && (data.rating === 0 || data.rating === '' || data.rating === undefined)) ||
                             (filterStar === 'star-1' && data.rating === 1) ||
                             (filterStar === 'star-2' && data.rating === 2) ||
-                            (filterStar === 'star-3' && data.rating === 3);
+                            (filterStar === 'star-3' && data.rating === 3) ||
+                            (filterStar === 'star-4' && data.rating === 4);
 
                         // Filter conditions for support to desktop
                         const matchesSupportDesktop = filterSupportDesktop === 'all' ||
@@ -1077,6 +1079,7 @@ li span {
                                 <span class="star" data-value="1">&#9733;</span>
                                 <span class="star" data-value="2">&#9733;</span>
                                 <span class="star" data-value="3">&#9733;</span>
+                                <span class="star" data-value="4">&#9733;</span>
                             </div>
                         <span class="attempts-count">Attempts: ${data.attempts || 0}</span>
                         <span>Nama: ${data.nama}</span>
