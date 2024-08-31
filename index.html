@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
+    <link rel="stylesheet" href="style4.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -255,7 +256,7 @@
 
         .form-checkbox-supportToDesktop {
             position: absolute;
-            top: 215px;
+            top: 218px;
             right: 15px;
             display: flex;
             align-items: center;
@@ -917,7 +918,7 @@
         //fitur filter data attempts
         document.addEventListener('DOMContentLoaded', function () {
             const storedGroup = localStorage.getItem('selectedGroup');
-
+            const storedAccount = localStorage.getItem('selectedAccount')
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
             const storedSupportDesktop = localStorage.getItem('filterSupportDesktop');
@@ -1312,6 +1313,53 @@
 
                             listItem.appendChild(noteInput);
 
+                            // Create a wrapper div for the dropdowns
+                            const dropdownWrapper = document.createElement('div');
+                            dropdownWrapper.style.display = 'flex';
+                            dropdownWrapper.style.gap = '10px'; // Optional: add space between dropdowns
+
+                            // Append the group dropdown
+                            const groupDropdown = document.createElement('select');
+                            groupDropdown.classList.add('group-dropdown');
+                            groupDropdown.style.cssText = 'display:none; width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
+
+                            // Populate the group dropdown
+                            ['Tap bot', 'Simple Play', 'Stay'].forEach(group => {
+                                const option = document.createElement('option');
+                                option.value = group;
+                                option.text = group;
+                                groupDropdown.appendChild(option);
+                            });
+
+                            // Set the value of the dropdown to the first group the data is part of
+                            groupDropdown.value = groups.find(group => ['Tap bot', 'Simple Play', 'Stay', 'Checkbox'].includes(group)) || 'Tap hand';
+
+                            // Append the group dropdown to the wrapper
+                            dropdownWrapper.appendChild(groupDropdown);
+
+                            // Create the account dropdown
+                            const accountDropdown = document.createElement('select');
+                            accountDropdown.classList.add('group-dropdown');
+                            accountDropdown.style.cssText = 'display:none; width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
+
+                            // Populate the account dropdown
+                            ['Account 1', 'Account 2'].forEach(account => {
+                                const option = document.createElement('option');
+                                option.value = account;
+                                option.text = account;
+                                accountDropdown.appendChild(option);
+                            });
+
+                            // Set the value of the account dropdown to the first matching account
+                            accountDropdown.value = accounts.find(account => ['Account 1', 'Account 2'].includes(account)) || 'Account 1';
+
+                            // Append the account dropdown to the wrapper
+                            dropdownWrapper.appendChild(accountDropdown);
+
+                            // Append the wrapper div to the listItem
+                            listItem.appendChild(dropdownWrapper);
+
+
                             // Checkbox creation for supportToDesktop
                             const supportToDesktopCheckbox = document.createElement('input');
                             supportToDesktopCheckbox.classList.add('form-checkbox-supportToDesktop');
@@ -1322,6 +1370,31 @@
                                 updateSupportToDesktopInFirebase(childSnapshot.key, supportToDesktopCheckbox.checked);
                             });
                             listItem.appendChild(supportToDesktopCheckbox);
+
+
+                            // Checkbox creation for supportToDesktop
+                            const supportToEmulatorCheckbox = document.createElement('input');
+                            supportToEmulatorCheckbox.classList.add('form-checkbox-supportToEmulator');
+                            supportToEmulatorCheckbox.style.cssText = 'display:none';
+                            supportToEmulatorCheckbox.type = 'checkbox';
+                            supportToEmulatorCheckbox.checked = data.supportToEmulator || false;
+                            supportToEmulatorCheckbox.style.marginLeft = '30px';
+                            supportToEmulatorCheckbox.addEventListener('change', () => {
+                                updateSupportToEmulatorInFirebase(childSnapshot.key, supportToEmulatorCheckbox.checked);
+                            });
+                            listItem.appendChild(supportToEmulatorCheckbox);
+
+                            // Single button for moving to a different group and account
+                            const moveButton = document.createElement('button');
+                            moveButton.classList.add('move-button');
+                            moveButton.textContent = 'Move to Group';
+                            moveButton.style.cssText = 'display:none';
+                            moveButton.addEventListener('click', () => {
+                                const selectedGroup = groupDropdown.value;
+                                const selectedAccount = accountDropdown.value;
+                                moveToGroupAndAccount(childSnapshot.key, selectedGroup, selectedAccount);
+                            });
+                            listItem.appendChild(moveButton);
 
                             const imageContainer = document.createElement('div');
                             imageContainer.classList.add('image-container');
