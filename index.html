@@ -5,591 +5,717 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Data to Firebase</title>
-    <link rel="stylesheet" href="style4.css">
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    padding: 20px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* General Styles for Form Elements */
-
-/* General Styles for Form Elements */
-.form-search,
-.note-input {
-    width: calc(100% - 16px); /* Adjust width to match padding */
-    padding: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    margin-bottom: 16px; /* Consistent spacing */
-}
-/* General Styles for Form Elements */
-.form-search,
-.note-input {
-    width: calc(100% - 16px); /* Adjust width to match padding */
-    padding: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    margin-bottom: 16px; /* Consistent spacing */
-}
-
-.form-search:focus,
-.note-input:focus {
-    border-color: #4CAF50;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-    outline: none;
-}
-
-/* Read-only Styles for Note Input */
-.note-input[readonly] {
-    background-color: #f5f5f5; /* Light grey background */
-    border-color: #ddd; /* Lighter border color */
-    color: #999; /* Grey text color */
-    cursor: pointer; /* Show pointer cursor to indicate it's clickable */
-    box-shadow: none; /* Remove box-shadow */
-}
-
-
-/* Styles for headings */
-h3, h4 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-h3 {
-    font-size: 18px;
-}
-
-h4 {
-    font-size: 16px;
-}
-
-/* Span inside h3 for data count */
-#dataCount {
-    font-weight: bold;
-    color:black;
-}
-
-/* Form styles */
-.dataForm {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.dataForm label {
-    display: block;
-    margin-bottom: 8px;
-}
-
-.dataForm input[type="text"],
-.dataForm input[type="number"] {
-    width: calc(100% - 16px); /* Adjust for padding */
-    padding: 8px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.dataForm button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* Search Form Styles */
-#searchForm {
-    margin: 20px auto;
-    max-width: 400px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Search Input */
-#searchForm input[type="text"] {
-    width: calc(100% - 16px); /* Adjust for padding */
-    padding: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-#searchForm input[type="text"]:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
-
-
-
-/* Form Button */
-#searchForm button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    text-align: center;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s;
-}
-
-#searchForm button:hover {
-    background-color: #45a049;
-}
-
-/* Data list styles */
-ul#dataList {
-    list-style-type: none;
-    padding: 0;
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-li {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden;
-}
-
-li span {
-    display: block;
-    margin-bottom: 10px;
-}
-
-.timer {
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.edit-button,
-.delete-button,
-.reset-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 12px;
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-.delete-button {
-    background-color: #f44336;
-}
-
-.reset-button {
-    background-color: #008CBA;
-}
-
-.image-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.image-container img {
-    width: 40px;
-    height: auto;
-}
-
-.form-checkbox {
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.form-checkbox-supportToDesktop {
-    position: absolute;
-    top: 255px;
-    right: 15px;
-    display: flex;
-    align-items: center;
-    appearance: none; /* Remove default checkbox styling */
-    width: 20px;
-    height: 20px;
-    border: 2px solid grey; /* Border color */
-    background-color: white; /* Background color */
-    cursor: pointer;
-    border-radius: 3px; /* Optional: rounded corners */
-}
-
-.form-checkbox-supportToEmulator {
-    position: absolute;
-    top: 255px;
-    right: 45px;
-    display: flex;
-    align-items: center;
-    appearance: none; /* Remove default checkbox styling */
-    width: 20px;
-    height: 20px;
-    border: 2px solid cyan; /* Border color */
-    background-color: white; /* Background color */
-    cursor: pointer;
-    border-radius: 3px; /* Optional: rounded corners */
-}
-
-/* Style for the checkbox when it is checked */
-.form-checkbox-supportToDesktop:checked {
-    background-color: grey; /* Background color when checked */
-    border-color: grey; /* Border color when checked */
-}
-
-/* Style for the checkbox when it is checked */
-.form-checkbox-supportToEmulator:checked {
-    background-color: cyan; /* Background color when checked */
-    border-color: cyan; /* Border color when checked */
-}
-
-
-.scroll-button {
-    position: fixed;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.scroll-to-bottom {
-    top: 20px;
-    right: 20px;
-}
-
-.scroll-to-top {
-    bottom: 20px;
-    right: 20px;
-}
-
-#editModal {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: #f0f0f0;
-    padding: 20px;
-    border: 1px solid #ccc;
-    z-index: 1000;
-    width: 300px; /* Menambahkan lebar modal untuk estetika */
-}
-
-#editModal div {
-    margin-bottom: 10px;
-}
-
-#editModal input[type="text"] {
-    width: 100%; /* Membuat input mengisi lebar kontainer */
-    padding: 10px; /* Memberikan padding di dalam input */
-    border: 1px solid #ddd; /* Mengubah warna border untuk tampilan lebih bersih */
-    border-radius: 4px; /* Membuat sudut input menjadi melengkung */
-    box-sizing: border-box; /* Menghitung padding dan border dalam lebar total */
-}
-
-#editModal button {
-    padding: 10px 15px; /* Memberikan padding pada tombol */
-    font-size: 16px; /* Mengatur ukuran font tombol */
-    border-radius: 4px; /* Membuat sudut tombol menjadi melengkung */
-    border: none; /* Menghapus border tombol default */
-    background-color: #007bff; /* Mengatur warna latar belakang tombol */
-    color: white; /* Mengatur warna teks tombol */
-    cursor: pointer; /* Mengubah cursor saat hover di tombol */
-}
-
-#editModal button:hover {
-    background-color: #0056b3; /* Mengubah warna latar belakang tombol saat hover */
-}
-
-/* Styles for the floating card modal */
-#editNoteModal {
-    display: none; /* Initially hidden */
-    position: fixed; /* Fixed position to make it float */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust for perfect centering */
-    width: 90%; /* Width relative to the viewport */
-    max-width: 600px; /* Increased maximum width */
-    background-color: #fff; /* White background */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for floating effect */
-    padding: 20px; /* Inner padding */
-    z-index: 1000; /* Ensure it appears above other elements */
-    box-sizing: border-box; /* Ensure padding is included in width calculations */
-    overflow-y: auto; /* Enable vertical scroll if content is too long */
-    max-height: 80vh; /* Limit the maximum height to 80% of the viewport height */
-}
-
-/* Style for each form group */
-#editNoteModal div {
-    margin-bottom: 20px; /* Space between input and buttons */
-}
-
-/* Style for text input */
-#editNoteModal input[type="text"] {
-    width: 100%; /* Full width */
-    padding: 14px; /* Increase padding */
-    border: 1px solid #ccc; /* Consistent border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 18px; /* Increase font size */
-    box-sizing: border-box; /* Ensure padding is included in width calculations */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
-}
-
-#editNoteModal input[type="text"]:focus {
-    border-color: #4CAF50; /* Border color on focus */
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Box shadow on focus */
-    outline: none; /* Remove outline */
-}
-
-/* Style for textarea */
-#editNoteModal textarea {
-    width: 100%; /* Full width */
-    padding: 14px; /* Increase padding */
-    border: 1px solid #ccc; /* Consistent border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 18px; /* Increase font size */
-    box-sizing: border-box; /* Ensure padding is included in width calculations */
-    resize: none; /* Disable resizing */
-    height: 150px; /* Fixed height */
-    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
-}
-
-#editNoteModal textarea:focus {
-    border-color: #4CAF50; /* Border color on focus */
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Box shadow on focus */
-    outline: none; /* Remove outline */
-}
-
-/* Style for buttons */
-#editNoteModal button {
-    background-color: #007bff; /* Blue background */
-    color: #fff; /* White text */
-    border: none; /* Remove default border */
-    border-radius: 4px; /* Rounded corners */
-    padding: 10px 20px; /* Padding inside the button */
-    font-size: 16px; /* Font size */
-    cursor: pointer; /* Pointer cursor on hover */
-    margin-right: 10px; /* Space between buttons */
-    transition: background-color 0.3s; /* Smooth transition for background color */
-}
-
-#editNoteModal button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-/* Style for cancel button */
-#editNoteModal button:last-child {
-    background-color: #f44336; /* Red background */
-}
-
-#editNoteModal button:last-child:hover {
-    background-color: #d32f2f; /* Darker red on hover */
-}
-
-
-.link-item {
-    margin-bottom: 10px;
-}
-
-.link-url,
-.link-description {
-    width: 300px;
-    margin-right: 10px;
-}
-
-.form-actions {
-    margin-top: 20px;
-}
-
-/* Optional: Background overlay for the modal */
-#modalOverlay {
-    display: none; /* Initially hidden */
-    position: fixed; /* Fixed position to cover entire screen */
-    top: 0; /* Start at the top */
-    left: 0; /* Start at the left */
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    z-index: 999; /* Below the modal */
-}
-
-/* Styles for the reload button */
-#reloadButton {
-    background-color: #007bff; /* Blue background */
-    color: #fff; /* White text */
-    border: none; /* Remove default border */
-    border-radius: 6px; /* Rounded corners */
-    padding: 10px 20px; /* Padding inside the button */
-    font-size: 16px; /* Font size */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  
-}
-
-#reloadButton:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    transform: scale(1.1); /* Slightly larger on hover */
-}
-
-/* General styles for the line break */
-.line-break {
-    width: 100%; /* Full width */
-    border-top: 1px solid #ccc; /* Light gray border */
-    margin: 10px 0; /* Top and bottom margin */
-    box-sizing: border-box; /* Ensure padding and border are included in width and height */
-}
-
-/* Responsive styles */
-@media (min-width: 768px) {
-    /* For tablets and larger screens (web) */
-    .line-break {
-        border-top: 1px solid #ccc; /* Border on top for web */
-        margin: 10px 0; /* Vertical margin */
-    }
-}
-
-@media (max-width: 767px) {
-    /* For mobile screens (Android) */
-    .line-break {
-        border-left: 1px solid #ccc; /* Border on the left for mobile */
-        height: 100%; /* Full height of the parent element */
-        margin: 0; /* No margin */
-        display: inline-block; /* Ensure it appears next to the content */
-    }
-}
-
-.rating {
-    display: inline-block;
-    font-size: 2em;
-    cursor: pointer;
-    direction: ltr; /* Menyusun bintang dari kiri ke kanan */
-    position: relative;
-    margin-top: -15px;
-    margin-bottom: -18px;
-}
-
-.star {
-    color: white;
-    transition: color 0.3s;
-    display: inline-block;
-    position: relative;
-    text-shadow: 0 0 1px black; /* Garis hitam pada bintang */
-}
-
-/* Menampilkan warna kuning pada bintang yang di-hover dan yang ada di sebelah kiri */
-.rating .star.hover,
-.rating .star.hover ~ .star {
-    color: gold; /* Warna bintang saat hover */
-    text-shadow: 0 0 1px black; /* Garis hitam tetap muncul saat hover */
-}
-
-/* Warna saat bintang dipilih */
-.star.selected {
-    color: gold;
-    text-shadow: 0 0 1px black; /* Garis hitam tetap muncul saat bintang dipilih */
-}
-
-.select-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Optional: adds space between selects */
-}
-
-.filter-item {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 150px; /* Ensures a minimum width for each filter item */
-}
-
-.filter-item label {
-    margin-bottom: 5px; /* Space between label and select */
-}
-
-.select-container select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    flex: 1;
-    min-width: 150px; /* Optional: sets a minimum width */
-}
-
-@media (max-width: 600px) {
-    .select-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .select-container select {
-        max-width: 100%; /* Ensures selects take up full width */
-    }
-}
-
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-#overlayCard {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
-
-
-</style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* General Styles for Form Elements */
+
+        /* General Styles for Form Elements */
+        .form-search,
+        .note-input {
+            width: calc(100% - 16px);
+            /* Adjust width to match padding */
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            margin-bottom: 16px;
+            /* Consistent spacing */
+        }
+
+        /* General Styles for Form Elements */
+        .form-search,
+        .note-input {
+            width: calc(100% - 16px);
+            /* Adjust width to match padding */
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            margin-bottom: 16px;
+            /* Consistent spacing */
+        }
+
+        .form-search:focus,
+        .note-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        /* Read-only Styles for Note Input */
+        .note-input[readonly] {
+            background-color: #f5f5f5;
+            /* Light grey background */
+            border-color: #ddd;
+            /* Lighter border color */
+            color: #999;
+            /* Grey text color */
+            cursor: pointer;
+            /* Show pointer cursor to indicate it's clickable */
+            box-shadow: none;
+            /* Remove box-shadow */
+        }
+
+
+        /* Styles for headings */
+        h3,
+        h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 18px;
+        }
+
+        h4 {
+            font-size: 16px;
+        }
+
+        /* Span inside h3 for data count */
+        #dataCount {
+            font-weight: bold;
+            color: black;
+        }
+
+        /* Form styles */
+        .dataForm {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .dataForm label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .dataForm input[type="text"],
+        .dataForm input[type="number"] {
+            width: calc(100% - 16px);
+            /* Adjust for padding */
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .dataForm button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Search Form Styles */
+        #searchForm {
+            margin: 20px auto;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search Input */
+        #searchForm input[type="text"] {
+            width: calc(100% - 16px);
+            /* Adjust for padding */
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        #searchForm input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+
+
+        /* Form Button */
+        #searchForm button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        #searchForm button:hover {
+            background-color: #45a049;
+        }
+
+        /* Data list styles */
+        ul#dataList {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        li {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        li span {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .edit-button,
+        .delete-button,
+        .reset-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 12px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+        }
+
+        .reset-button {
+            background-color: #008CBA;
+        }
+
+        .image-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .image-container img {
+            width: 40px;
+            height: auto;
+        }
+
+        .form-checkbox {
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-checkbox-supportToDesktop {
+            position: absolute;
+            top: 215px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            appearance: none;
+            /* Remove default checkbox styling */
+            width: 20px;
+            height: 20px;
+            border: 2px solid grey;
+            /* Border color */
+            background-color: white;
+            /* Background color */
+            cursor: pointer;
+            border-radius: 3px;
+            /* Optional: rounded corners */
+        }
+
+        .form-checkbox-supportToEmulator {
+            position: absolute;
+            top: 255px;
+            right: 45px;
+            display: flex;
+            align-items: center;
+            appearance: none;
+            /* Remove default checkbox styling */
+            width: 20px;
+            height: 20px;
+            border: 2px solid cyan;
+            /* Border color */
+            background-color: white;
+            /* Background color */
+            cursor: pointer;
+            border-radius: 3px;
+            /* Optional: rounded corners */
+        }
+
+        /* Style for the checkbox when it is checked */
+        .form-checkbox-supportToDesktop:checked {
+            background-color: grey;
+            /* Background color when checked */
+            border-color: grey;
+            /* Border color when checked */
+        }
+
+        /* Style for the checkbox when it is checked */
+        .form-checkbox-supportToEmulator:checked {
+            background-color: cyan;
+            /* Background color when checked */
+            border-color: cyan;
+            /* Border color when checked */
+        }
+
+
+        .scroll-button {
+            position: fixed;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .scroll-to-bottom {
+            top: 20px;
+            right: 20px;
+        }
+
+        .scroll-to-top {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        #editModal {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #f0f0f0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            width: 300px;
+            /* Menambahkan lebar modal untuk estetika */
+        }
+
+        #editModal div {
+            margin-bottom: 10px;
+        }
+
+        #editModal input[type="text"] {
+            width: 100%;
+            /* Membuat input mengisi lebar kontainer */
+            padding: 10px;
+            /* Memberikan padding di dalam input */
+            border: 1px solid #ddd;
+            /* Mengubah warna border untuk tampilan lebih bersih */
+            border-radius: 4px;
+            /* Membuat sudut input menjadi melengkung */
+            box-sizing: border-box;
+            /* Menghitung padding dan border dalam lebar total */
+        }
+
+        #editModal button {
+            padding: 10px 15px;
+            /* Memberikan padding pada tombol */
+            font-size: 16px;
+            /* Mengatur ukuran font tombol */
+            border-radius: 4px;
+            /* Membuat sudut tombol menjadi melengkung */
+            border: none;
+            /* Menghapus border tombol default */
+            background-color: #007bff;
+            /* Mengatur warna latar belakang tombol */
+            color: white;
+            /* Mengatur warna teks tombol */
+            cursor: pointer;
+            /* Mengubah cursor saat hover di tombol */
+        }
+
+        #editModal button:hover {
+            background-color: #0056b3;
+            /* Mengubah warna latar belakang tombol saat hover */
+        }
+
+        /* Styles for the floating card modal */
+        #editNoteModal {
+            display: none;
+            /* Initially hidden */
+            position: fixed;
+            /* Fixed position to make it float */
+            top: 50%;
+            /* Center vertically */
+            left: 50%;
+            /* Center horizontally */
+            transform: translate(-50%, -50%);
+            /* Adjust for perfect centering */
+            width: 90%;
+            /* Width relative to the viewport */
+            max-width: 600px;
+            /* Increased maximum width */
+            background-color: #fff;
+            /* White background */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Slight shadow for floating effect */
+            padding: 20px;
+            /* Inner padding */
+            z-index: 1000;
+            /* Ensure it appears above other elements */
+            box-sizing: border-box;
+            /* Ensure padding is included in width calculations */
+            overflow-y: auto;
+            /* Enable vertical scroll if content is too long */
+            max-height: 80vh;
+            /* Limit the maximum height to 80% of the viewport height */
+        }
+
+        /* Style for each form group */
+        #editNoteModal div {
+            margin-bottom: 20px;
+            /* Space between input and buttons */
+        }
+
+        /* Style for text input */
+        #editNoteModal input[type="text"] {
+            width: 100%;
+            /* Full width */
+            padding: 14px;
+            /* Increase padding */
+            border: 1px solid #ccc;
+            /* Consistent border */
+            border-radius: 4px;
+            /* Rounded corners */
+            font-size: 18px;
+            /* Increase font size */
+            box-sizing: border-box;
+            /* Ensure padding is included in width calculations */
+            transition: border-color 0.3s, box-shadow 0.3s;
+            /* Smooth transitions */
+        }
+
+        #editNoteModal input[type="text"]:focus {
+            border-color: #4CAF50;
+            /* Border color on focus */
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            /* Box shadow on focus */
+            outline: none;
+            /* Remove outline */
+        }
+
+        /* Style for textarea */
+        #editNoteModal textarea {
+            width: 100%;
+            /* Full width */
+            padding: 14px;
+            /* Increase padding */
+            border: 1px solid #ccc;
+            /* Consistent border */
+            border-radius: 4px;
+            /* Rounded corners */
+            font-size: 18px;
+            /* Increase font size */
+            box-sizing: border-box;
+            /* Ensure padding is included in width calculations */
+            resize: none;
+            /* Disable resizing */
+            height: 150px;
+            /* Fixed height */
+            transition: border-color 0.3s, box-shadow 0.3s;
+            /* Smooth transitions */
+        }
+
+        #editNoteModal textarea:focus {
+            border-color: #4CAF50;
+            /* Border color on focus */
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            /* Box shadow on focus */
+            outline: none;
+            /* Remove outline */
+        }
+
+        /* Style for buttons */
+        #editNoteModal button {
+            background-color: #007bff;
+            /* Blue background */
+            color: #fff;
+            /* White text */
+            border: none;
+            /* Remove default border */
+            border-radius: 4px;
+            /* Rounded corners */
+            padding: 10px 20px;
+            /* Padding inside the button */
+            font-size: 16px;
+            /* Font size */
+            cursor: pointer;
+            /* Pointer cursor on hover */
+            margin-right: 10px;
+            /* Space between buttons */
+            transition: background-color 0.3s;
+            /* Smooth transition for background color */
+        }
+
+        #editNoteModal button:hover {
+            background-color: #0056b3;
+            /* Darker blue on hover */
+        }
+
+        /* Style for cancel button */
+        #editNoteModal button:last-child {
+            background-color: #f44336;
+            /* Red background */
+        }
+
+        #editNoteModal button:last-child:hover {
+            background-color: #d32f2f;
+            /* Darker red on hover */
+        }
+
+
+        .link-item {
+            margin-bottom: 10px;
+        }
+
+        .link-url,
+        .link-description {
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .form-actions {
+            margin-top: 20px;
+        }
+
+        /* Optional: Background overlay for the modal */
+        #modalOverlay {
+            display: none;
+            /* Initially hidden */
+            position: fixed;
+            /* Fixed position to cover entire screen */
+            top: 0;
+            /* Start at the top */
+            left: 0;
+            /* Start at the left */
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent black */
+            z-index: 999;
+            /* Below the modal */
+        }
+
+        /* Styles for the reload button */
+        #reloadButton {
+            background-color: #007bff;
+            /* Blue background */
+            color: #fff;
+            /* White text */
+            border: none;
+            /* Remove default border */
+            border-radius: 6px;
+            /* Rounded corners */
+            padding: 10px 20px;
+            /* Padding inside the button */
+            font-size: 16px;
+            /* Font size */
+            cursor: pointer;
+            /* Pointer cursor on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Shadow for depth */
+
+        }
+
+        #reloadButton:hover {
+            background-color: #0056b3;
+            /* Darker blue on hover */
+            transform: scale(1.1);
+            /* Slightly larger on hover */
+        }
+
+        /* General styles for the line break */
+        .line-break {
+            width: 100%;
+            /* Full width */
+            border-top: 1px solid #ccc;
+            /* Light gray border */
+            margin: 10px 0;
+            /* Top and bottom margin */
+            box-sizing: border-box;
+            /* Ensure padding and border are included in width and height */
+        }
+
+        /* Responsive styles */
+        @media (min-width: 768px) {
+
+            /* For tablets and larger screens (web) */
+            .line-break {
+                border-top: 1px solid #ccc;
+                /* Border on top for web */
+                margin: 10px 0;
+                /* Vertical margin */
+            }
+        }
+
+        @media (max-width: 767px) {
+
+            /* For mobile screens (Android) */
+            .line-break {
+                border-left: 1px solid #ccc;
+                /* Border on the left for mobile */
+                height: 100%;
+                /* Full height of the parent element */
+                margin: 0;
+                /* No margin */
+                display: inline-block;
+                /* Ensure it appears next to the content */
+            }
+        }
+
+        .rating {
+            display: inline-block;
+            font-size: 2em;
+            cursor: pointer;
+            direction: ltr;
+            /* Menyusun bintang dari kiri ke kanan */
+            position: relative;
+            margin-top: -15px;
+            margin-bottom: -18px;
+        }
+
+        .star {
+            color: white;
+            transition: color 0.3s;
+            display: inline-block;
+            position: relative;
+            text-shadow: 0 0 1px black;
+            /* Garis hitam pada bintang */
+        }
+
+        /* Menampilkan warna kuning pada bintang yang di-hover dan yang ada di sebelah kiri */
+        .rating .star.hover,
+        .rating .star.hover~.star {
+            color: gold;
+            /* Warna bintang saat hover */
+            text-shadow: 0 0 1px black;
+            /* Garis hitam tetap muncul saat hover */
+        }
+
+        /* Warna saat bintang dipilih */
+        .star.selected {
+            color: gold;
+            text-shadow: 0 0 1px black;
+            /* Garis hitam tetap muncul saat bintang dipilih */
+        }
+
+        .select-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            /* Optional: adds space between selects */
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 150px;
+            /* Ensures a minimum width for each filter item */
+        }
+
+        .filter-item label {
+            margin-bottom: 5px;
+            /* Space between label and select */
+        }
+
+        .select-container select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex: 1;
+            min-width: 150px;
+            /* Optional: sets a minimum width */
+        }
+
+        @media (max-width: 600px) {
+            .select-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .select-container select {
+                max-width: 100%;
+                /* Ensures selects take up full width */
+            }
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #overlayCard {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -701,14 +827,11 @@ li span {
                 <label for="groupSelect">Filter Group:</label>
                 <select id="groupSelect" class="group-dropdown">
                     <option value="">Semua Grup</option>
-                    <option value="Tap bot">Tap Bot</option>
-                    <option value="Simple Play">Simple Play</option>
-                    <option value="Stay">Stay</option>
                     <option value="Checkbox">Checkbox</option>
                 </select>
             </div>
 
-            <div class="filter-item">
+            <div class="filter-item" style="display: none;">
                 <label for="AccountSelect">Filter Account:</label>
                 <select id="AccountSelect" class="group-dropdown">
                     <option value="">Semua Grup</option>
@@ -736,7 +859,7 @@ li span {
                     <option value="SupportDesktop">Support Desktop</option>
                     <option value="NoSupportDesktop">No Support Desktop</option>
                 </select>
-                <select id="filterSupportEmulatorSelect">
+                <select id="filterSupportEmulatorSelect" style="display: none;">
                     <option value="all">Semua</option>
                     <option value="SupportEmulator">Send to Emulator</option>
                 </select>
@@ -794,7 +917,7 @@ li span {
         //fitur filter data attempts
         document.addEventListener('DOMContentLoaded', function () {
             const storedGroup = localStorage.getItem('selectedGroup');
-            const storedAccount = localStorage.getItem('selectedAccount')
+
             const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
             const storedSupportDesktop = localStorage.getItem('filterSupportDesktop');
@@ -1179,7 +1302,7 @@ li span {
                             noteInput.classList.add('note-input');
 
                             // Add inline style to match the group dropdown, with no margin between elements
-                            noteInput.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 0;';
+                            noteInput.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;';
                             noteInput.value = data.note;
                             noteInput.readOnly = true;
 
@@ -1188,53 +1311,6 @@ li span {
                             });
 
                             listItem.appendChild(noteInput);
-
-                            // Create a wrapper div for the dropdowns
-                            const dropdownWrapper = document.createElement('div');
-                            dropdownWrapper.style.display = 'flex';
-                            dropdownWrapper.style.gap = '10px'; // Optional: add space between dropdowns
-
-                            // Append the group dropdown
-                            const groupDropdown = document.createElement('select');
-                            groupDropdown.classList.add('group-dropdown');
-                            groupDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
-
-                            // Populate the group dropdown
-                            ['Tap bot','Simple Play', 'Stay'].forEach(group => {
-                                const option = document.createElement('option');
-                                option.value = group;
-                                option.text = group;
-                                groupDropdown.appendChild(option);
-                            });
-
-                            // Set the value of the dropdown to the first group the data is part of
-                            groupDropdown.value = groups.find(group => ['Tap bot','Simple Play', 'Stay','Checkbox'].includes(group)) || 'Tap hand';
-
-                            // Append the group dropdown to the wrapper
-                            dropdownWrapper.appendChild(groupDropdown);
-
-                            // Create the account dropdown
-                            const accountDropdown = document.createElement('select');
-                            accountDropdown.classList.add('group-dropdown');
-                            accountDropdown.style.cssText = 'width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;';
-
-                            // Populate the account dropdown
-                            ['Account 1', 'Account 2'].forEach(account => {
-                                const option = document.createElement('option');
-                                option.value = account;
-                                option.text = account;
-                                accountDropdown.appendChild(option);
-                            });
-
-                            // Set the value of the account dropdown to the first matching account
-                            accountDropdown.value = accounts.find(account => ['Account 1', 'Account 2'].includes(account)) || 'Account 1';
-
-                            // Append the account dropdown to the wrapper
-                            dropdownWrapper.appendChild(accountDropdown);
-
-                            // Append the wrapper div to the listItem
-                            listItem.appendChild(dropdownWrapper);
-
 
                             // Checkbox creation for supportToDesktop
                             const supportToDesktopCheckbox = document.createElement('input');
@@ -1246,29 +1322,6 @@ li span {
                                 updateSupportToDesktopInFirebase(childSnapshot.key, supportToDesktopCheckbox.checked);
                             });
                             listItem.appendChild(supportToDesktopCheckbox);
-
-
-                            // Checkbox creation for supportToDesktop
-                            const supportToEmulatorCheckbox = document.createElement('input');
-                            supportToEmulatorCheckbox.classList.add('form-checkbox-supportToEmulator');
-                            supportToEmulatorCheckbox.type = 'checkbox';
-                            supportToEmulatorCheckbox.checked = data.supportToEmulator || false;
-                            supportToEmulatorCheckbox.style.marginLeft = '30px';
-                            supportToEmulatorCheckbox.addEventListener('change', () => {
-                                updateSupportToEmulatorInFirebase(childSnapshot.key, supportToEmulatorCheckbox.checked);
-                            });
-                            listItem.appendChild(supportToEmulatorCheckbox);
-
-                            // Single button for moving to a different group and account
-                            const moveButton = document.createElement('button');
-                            moveButton.classList.add('move-button');
-                            moveButton.textContent = 'Move to Group';
-                            moveButton.addEventListener('click', () => {
-                                const selectedGroup = groupDropdown.value;
-                                const selectedAccount = accountDropdown.value;
-                                moveToGroupAndAccount(childSnapshot.key, selectedGroup, selectedAccount);
-                            });
-                            listItem.appendChild(moveButton);
 
                             const imageContainer = document.createElement('div');
                             imageContainer.classList.add('image-container');
