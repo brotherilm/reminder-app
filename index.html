@@ -993,8 +993,40 @@
         const timerRef = ref(database, 'timer/endTime');
 
         function startCountdown() {
+            // Mendapatkan waktu saat ini dalam UTC
             const now = new Date();
-            const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 minute from now
+
+            // Menghitung waktu WIB dengan menambahkan 7 jam
+            const jamWIB = (now.getUTCHours() + 7) % 24;
+            const menit = String(now.getUTCMinutes()).padStart(2, '0');
+            const detik = String(now.getUTCSeconds()).padStart(2, '0');
+
+            // Menghitung sisa waktu menuju pukul 07:00:00 WIB berikutnya
+            const targetJam = 7; // Jam tujuan pukul 07:00:00
+            let remainingHours, remainingMinutes, remainingSeconds;
+
+            if (jamWIB >= targetJam) {
+                // Jika sekarang sudah lewat 07:00, hitung waktu sisa ke 07:00 besok
+                remainingHours = 24 - (jamWIB - targetJam);
+            } else {
+                // Jika belum 07:00, hitung waktu sisa ke 07:00 hari ini
+                remainingHours = targetJam - jamWIB;
+            }
+
+            remainingMinutes = 59 - now.getUTCMinutes();
+            remainingSeconds = 59 - now.getUTCSeconds();
+
+            // Memastikan format dua digit
+            remainingHours = String(remainingHours).padStart(2, '0');
+            remainingMinutes = String(remainingMinutes).padStart(2, '0');
+            remainingSeconds = String(remainingSeconds).padStart(2, '0');
+
+            // Menggabungkan sisa waktu menjadi satu variabel
+            const remainingTimer = `${remainingHours}:${remainingMinutes}:${remainingSeconds}`;
+
+            // Menghitung waktu akhir (endTime) menuju 07:00 WIB
+            const endTime = new Date(now.getTime() + (remainingHours * 60 * 60 * 1000) + (remainingMinutes * 60 * 1000) +
+                (remainingSeconds * 1000));
 
             // Simpan endTime ke Firebase
             set(timerRef, endTime.toISOString());
