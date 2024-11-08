@@ -20,7 +20,6 @@
 
         /* General Styles for Form Elements */
 
-        /* General Styles for Form Elements */
         .form-search,
         .note-input {
             width: calc(100% - 16px);
@@ -769,126 +768,151 @@
         <button onclick="closeModal()">Cancel</button>
     </div>
 
+    <div class="full-bag" style="display: flex;">
+        <div class="bag-telegram" style="width: 75%;">
+            <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
 
-    <input type="text" id="searchInput" class="form-search" placeholder="Cari nama...">
-
-    <div>
-        <div id="countdown">Reset Attempts: 24 jam 0 menit 0 detik</div>
-        <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
-           font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
-            Mulai
-        </button>
-    </div>
+            <div>
+                <div id="countdown">Reset Attempts: 24 jam 0 menit 0 detik</div>
+                <button id="startButton" style="padding: 20px; border-radius: 10px; border: 1px solid #ccc; width: 90%; height: 90%; 
+                   font-size: 32px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: white; z-index: 9999;">
+                    Mulai
+                </button>
+            </div>
 
 
-    <div id="editNoteModal" style="display:none;">
-        <div>
-            <label for="editNote">Edit Note:</label>
-            <input type="text" id="editNote">
+            <div id="editNoteModal" style="display:none;">
+                <div>
+                    <label for="editNote">Edit Note:</label>
+                    <input type="text" id="editNote">
+                </div>
+                <button onclick="submitEditNote()">Submit</button>
+                <button onclick="closeNoteModal()">Cancel</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between;">
+                <h3>Total Data: <span id="dataCount">0</span></h3>
+                <button id="reloadButton">Reload</button>
+            </div>
+            <div style="display: flex;">
+                <div id="countData" style="margin-right: 10px;"></div>
+                <div id="countTimerOut" style="margin-right: 10px;"></div>
+                <div id="TimerRunning" style="margin-right: 10px;"></div>
+            </div>
+
+            <div id="overlay" style="display: none;">
+                <div id="overlayCard">
+                    <p>Countdown telah selesai!</p>
+                    <button id="closeOverlayButton" onclick="closeOverlay()">Mulai lagi</button>
+                </div>
+            </div>
+
+
+            <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
+
+            <div id="filterGroup">
+                <div class="select-container">
+                    <!-- <div class="filter-item">
+                        <label for="filterSelect">Filter Attempts:</label>
+                        <select id="filterSelect">
+                            <option value="all">Semua</option>
+                            <option value="zero">Attempts Nol</option>
+                            <option value="Attempts 1">Attempts 1</option>
+                            <option value="Attempts 2">Attempts 2</option>
+                            <option value="Attempts 3++">Attempts 3++</option>
+                        </select>
+                    </div> -->
+
+                    <div class="filter-item">
+                        <label for="groupSelect">Filter Group:</label>
+                        <select id="groupSelect" class="group-dropdown">
+                            <option value="">Semua Grup</option>
+                            <option value="Checkbox">Checkbox</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-item" style="display: none;">
+                        <label for="AccountSelect">Filter Account:</label>
+                        <select id="AccountSelect" class="group-dropdown">
+                            <option value="">Semua Grup</option>
+                            <option value="Account 1">Account 1</option>
+                            <option value="Account 2">Account 2</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-item">
+                        <label for="filterStarSelect">Filter Star:</label>
+                        <select id="filterStarSelect">
+                            <option value="all">Semua</option>
+                            <option value="star-0">No Star</option>
+                            <option value="star-1">Bintang 1 (no playing again)</option>
+                            <option value="star-2">Bintang 2 (Once every 2 days)</option>
+                            <option value="star-3">Bintang 3 (primary)</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-item">
+                        <label for="filterSupportDesktopSelect">Filter Support:</label>
+                        <select id="filterSupportDesktopSelect">
+                            <option value="all">Semua</option>
+                            <option value="SupportDesktop">Support Desktop</option>
+                            <option value="NoSupportDesktop">No Support Desktop</option>
+                        </select>
+                        <select id="filterSupportEmulatorSelect" style="display: none;">
+                            <option value="all">Semua</option>
+                            <option value="SupportEmulator">Send to Emulator</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tombol untuk menggulir ke bawah -->
+            <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
+
+            <!-- <div id="dataCount"></div> -->
+            <ul id="dataList"></ul>
+
+            <button id="scrollToTopBtn" class="scroll-button scroll-to-top">Scroll to Top</button>
+
+            <h2 style="text-align: center;">Buat List</h2>
+
+            <form id="dataForm" class="dataForm">
+                <label for="nama">Nama:</label>
+                <input type="text" name="nama" id="nama" placeholder="Masukkan nama" required>
+                <br><br>
+                <label for="nomor">Nomor:</label>
+                <input type="number" name="nomor" id="nomor" placeholder="Masukkan nomor" required>
+                <br><br>
+                <label for="link">Link Telegram:</label>
+                <input type="text" name="link" id="link" placeholder="Masukkan link" required>
+                <button type="submit">Submit</button>
+            </form>
+
         </div>
-        <button onclick="submitEditNote()">Submit</button>
-        <button onclick="closeNoteModal()">Cancel</button>
-    </div>
+        <div class="bag-extension"
+            style="margin: 20px; border: solid; width: 25%; padding: 15px; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);">
+            <div class="list-extension-card" style="margin-top: 15px;"></div>
+            <form id="extensionForm" style="width: 100%;">
+                <label for="nama_extension">Nama:</label>
+                <input type="text" id="nama_extension" name="nama_extension" required
+                    style="width: 90%; padding: 5px; margin-bottom: 10px;"><br>
 
-    <div style="display: flex; justify-content: space-between;">
-        <h3>Total Data: <span id="dataCount">0</span></h3>
-        <button id="reloadButton">Reload</button>
-    </div>
-    <div style="display: flex;">
-        <div id="countData" style="margin-right: 10px;"></div>
-        <div id="countTimerOut" style="margin-right: 10px;"></div>
-        <div id="TimerRunning" style="margin-right: 10px;"></div>
-    </div>
+                <label for="tipe">Tipe:</label>
+                <input type="text" id="tipe" name="tipe" required
+                    style="width: 90%; padding: 5px; margin-bottom: 10px;"><br>
 
-    <div id="overlay" style="display: none;">
-        <div id="overlayCard">
-            <p>Countdown telah selesai!</p>
-            <button id="closeOverlayButton" onclick="closeOverlay()">Mulai lagi</button>
-        </div>
-    </div>
+                <label for="photo">Foto Profil:</label>
+                <input type="file" id="photo" name="photo" accept="image/*" style="margin-bottom: 10px;"><br>
 
+                <button type="submit"
+                    style="padding: 5px 10px; border: none; background-color: #4CAF50; color: white; cursor: pointer;">Submit</button>
+            </form>
 
-    <button id="hide-group" style="padding: 10px; border-radius: 5px; border: 1px solid #ccc;">Hide</button>
-
-    <div id="filterGroup">
-        <div class="select-container">
-            <div class="filter-item">
-                <label for="filterSelect">Filter Attempts:</label>
-                <select id="filterSelect">
-                    <option value="all">Semua</option>
-                    <option value="zero">Attempts Nol</option>
-                    <option value="Attempts 1">Attempts 1</option>
-                    <option value="Attempts 2">Attempts 2</option>
-                    <option value="Attempts 3++">Attempts 3++</option>
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label for="groupSelect">Filter Group:</label>
-                <select id="groupSelect" class="group-dropdown">
-                    <option value="">Semua Grup</option>
-                    <option value="Checkbox">Checkbox</option>
-                </select>
-            </div>
-
-            <div class="filter-item" style="display: none;">
-                <label for="AccountSelect">Filter Account:</label>
-                <select id="AccountSelect" class="group-dropdown">
-                    <option value="">Semua Grup</option>
-                    <option value="Account 1">Account 1</option>
-                    <option value="Account 2">Account 2</option>
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label for="filterStarSelect">Filter Star:</label>
-                <select id="filterStarSelect">
-                    <option value="all">Semua</option>
-                    <option value="star-0">No Star</option>
-                    <option value="star-1">Bintang 1 (no playing again)</option>
-                    <option value="star-2">Bintang 2 (Once every 2 days)</option>
-                    <option value="star-3">Bintang 3 (primary)</option>
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label for="filterSupportDesktopSelect">Filter Support:</label>
-                <select id="filterSupportDesktopSelect">
-                    <option value="all">Semua</option>
-                    <option value="SupportDesktop">Support Desktop</option>
-                    <option value="NoSupportDesktop">No Support Desktop</option>
-                </select>
-                <select id="filterSupportEmulatorSelect" style="display: none;">
-                    <option value="all">Semua</option>
-                    <option value="SupportEmulator">Send to Emulator</option>
-                </select>
-            </div>
         </div>
 
     </div>
-
-    <!-- Tombol untuk menggulir ke bawah -->
-    <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
-
-    <!-- <div id="dataCount"></div> -->
-    <ul id="dataList"></ul>
-
-    <button id="scrollToTopBtn" class="scroll-button scroll-to-top">Scroll to Top</button>
-
-    <h2 style="text-align: center;">Buat List</h2>
-
-    <form id="dataForm" class="dataForm">
-        <label for="nama">Nama:</label>
-        <input type="text" name="nama" id="nama" placeholder="Masukkan nama" required>
-        <br><br>
-        <label for="nomor">Nomor:</label>
-        <input type="number" name="nomor" id="nomor" placeholder="Masukkan nomor" required>
-        <br><br>
-        <label for="link">Link Telegram:</label>
-        <input type="text" name="link" id="link" placeholder="Masukkan link" required>
-        <button type="submit">Submit</button>
-    </form>
 
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -918,7 +942,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const storedGroup = localStorage.getItem('selectedGroup');
             const storedAccount = localStorage.getItem('selectedAccount')
-            const storedFilterAttempts = localStorage.getItem('filterAttempts');
+            // const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
             const storedSupportDesktop = localStorage.getItem('filterSupportDesktop');
             const storedSupportEmulator = localStorage.getItem('filterSupportEmulator');
@@ -931,9 +955,9 @@
                 document.getElementById('AccountSelect').value = storedAccount;
             }
 
-            if (storedFilterAttempts) {
-                document.getElementById('filterSelect').value = storedFilterAttempts;
-            }
+            // if (storedFilterAttempts) {
+            //     document.getElementById('filterSelect').value = storedFilterAttempts;
+            // }
 
             if (storedFilterStar) {
                 document.getElementById('filterStarSelect').value = storedFilterStar;
@@ -962,10 +986,10 @@
             fetchData();
         });
 
-        document.getElementById('filterSelect').addEventListener('change', function () {
-            localStorage.setItem('filterAttempts', this.value);
-            fetchData();
-        });
+        // document.getElementById('filterSelect').addEventListener('change', function () {
+        //     localStorage.setItem('filterAttempts', this.value);
+        //     fetchData();
+        // });
 
         document.getElementById('filterStarSelect').addEventListener('change', function () {
             localStorage.setItem('filterStar', this.value);
@@ -1143,7 +1167,7 @@
             const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             const selectedGroup = document.getElementById('groupSelect').value;
             const selectedAccount = document.getElementById('AccountSelect').value;
-            const filterAttempts = document.getElementById('filterSelect').value;
+            // const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
             const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
             const filterSupportEmulator = document.getElementById('filterSupportEmulatorSelect').value;
@@ -1192,10 +1216,10 @@
                         }
 
                         // Filter conditions for attempts
-                        const matchesAttempts = filterAttempts === 'all' || (filterAttempts === 'zero' && data.attempts === 0) ||
-                            (filterAttempts === 'Attempts 1' && data.attempts === 1) ||
-                            (filterAttempts === 'Attempts 2' && data.attempts === 2) ||
-                            (filterAttempts === 'Attempts 3++' && data.attempts > 2);
+                        // const matchesAttempts = filterAttempts === 'all' || (filterAttempts === 'zero' && data.attempts === 0) ||
+                        //     (filterAttempts === 'Attempts 1' && data.attempts === 1) ||
+                        //     (filterAttempts === 'Attempts 2' && data.attempts === 2) ||
+                        //     (filterAttempts === 'Attempts 3++' && data.attempts > 2);
 
                         // Filter conditions for star rating
                         const matchesStar = filterStar === 'all' ||
@@ -1219,7 +1243,7 @@
                             );
 
                         // Combine all conditions
-                        if (matchesSearch && matchesGroup && matchesAccount && matchesAttempts && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
+                        if (matchesSearch && matchesGroup && matchesAccount && matchesStar && matchesSupportDesktop && matchesSupportEmulator) {
                             countDisplayedData++;
                             const listItem = document.createElement('li');
                             const dataKey = childSnapshot.key;
@@ -1941,7 +1965,116 @@
             fetchData();
         });
 
+        document.getElementById('extensionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
+            const nama_extension = document.getElementById('nama_extension').value;
+            const tipe = document.getElementById('tipe').value;
+            const photo = document.getElementById('photo').files[0];
+            let photoUrl = '';
+
+            if (photo) {
+                const reader = new FileReader();
+                reader.onload = async function (e) {
+                    photoUrl = e.target.result;
+
+                    // Create a unique key for the new data entry
+                    const newEntryKey = Date.now();
+                    const dataRef = ref(database, 'extensions/' + newEntryKey);
+
+                    // Save the data to Firebase
+                    await set(dataRef, {
+                        nama_extension: nama_extension,
+                        tipe: tipe,
+                        photoUrl: photoUrl
+                    });
+
+                    document.getElementById('extensionForm').reset();
+                    displayData();
+                };
+                reader.readAsDataURL(photo);
+            } else {
+                const newEntryKey = Date.now();
+                const dataRef = ref(database, 'extensions/' + newEntryKey);
+                await set(dataRef, {
+                    nama_extension: nama_extension,
+                    tipe: tipe,
+                    photoUrl: photoUrl
+                });
+                document.getElementById('extensionForm').reset();
+                displayData();
+            }
+        });
+
+        async function displayData() {
+            const listCard = document.querySelector('.list-extension-card');
+            listCard.innerHTML = ''; // Clear previous content
+
+            const dbRef = ref(database);
+            const snapshot = await get(child(dbRef, 'extensions/'));
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                for (const key in data) {
+                    const item = document.createElement('div');
+                    item.style.border = '1px solid #ccc';
+                    item.style.padding = '10px';
+                    item.style.margin = '10px 0';
+                    item.style.borderRadius = '8px';
+                    item.style.backgroundColor = '#f9f9f9';
+                    item.style.position = 'relative';
+
+                    const photo = document.createElement('img');
+                    photo.src = data[key].photoUrl || 'https://via.placeholder.com/100';
+                    photo.alt = 'Profile photo';
+                    photo.style.width = '50px';
+                    photo.style.height = '50px';
+                    photo.style.borderRadius = '50%';
+                    photo.style.objectFit = 'cover';
+                    photo.style.marginRight = '10px';
+
+                    const text = document.createElement('span');
+                    text.textContent = `Nama: ${data[key].nama_extension}, Tipe: ${data[key].tipe}`;
+                    text.style.display = 'inline-block';
+                    text.style.verticalAlign = 'middle';
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.style.marginLeft = '10px';
+                    editButton.style.padding = '5px';
+                    editButton.style.cursor = 'pointer';
+                    editButton.addEventListener('click', () => {
+                        document.getElementById('nama_extension').value = data[key].nama_extension;
+                        document.getElementById('tipe').value = data[key].tipe;
+                        remove(ref(database, 'extensions/' + key));
+                    });
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Hapus';
+                    deleteButton.style.marginLeft = '5px';
+                    deleteButton.style.padding = '5px';
+                    deleteButton.style.cursor = 'pointer';
+                    deleteButton.style.backgroundColor = '#ff4c4c';
+                    deleteButton.style.color = 'white';
+                    deleteButton.addEventListener('click', async () => {
+                        await remove(ref(database, 'extensions/' + key));
+                        displayData();
+                    });
+
+                    item.appendChild(photo);
+                    item.appendChild(text);
+                    item.appendChild(editButton);
+                    item.appendChild(deleteButton);
+                    listCard.appendChild(item);
+                }
+            } else {
+                listCard.textContent = 'No data available';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayData();
+        });
     </script>
 </body>
 
