@@ -274,15 +274,15 @@
 
         .form-checkbox-supportToEmulator {
             position: absolute;
-            top: 255px;
+            top: 218px;
             right: 45px;
             display: flex;
             align-items: center;
             appearance: none;
             /* Remove default checkbox styling */
-            width: 20px;
+            width: 60px;
             height: 20px;
-            border: 2px solid cyan;
+            border: 2px solid blue;
             /* Border color */
             background-color: white;
             /* Background color */
@@ -301,9 +301,9 @@
 
         /* Style for the checkbox when it is checked */
         .form-checkbox-supportToEmulator:checked {
-            background-color: cyan;
+            background-color: blue;
             /* Background color when checked */
-            border-color: cyan;
+            border-color: blue;
             /* Border color when checked */
         }
 
@@ -859,7 +859,7 @@
                             <option value="SupportDesktop">Support Desktop</option>
                             <option value="NoSupportDesktop">No Support Desktop</option>
                         </select>
-                        <select id="filterSupportEmulatorSelect" style="display: none;">
+                        <select id="TesnetGroupSelect" style="display: none;">
                             <option value="all">Semua</option>
                             <option value="SupportEmulator">Send to Emulator</option>
                         </select>
@@ -872,7 +872,11 @@
             <button id="scrollToBottomBtn" class="scroll-button scroll-to-bottom">Scroll to Bottom</button>
 
             <!-- <div id="dataCount"></div> -->
-            <ul id="dataList"></ul>
+
+            <ul id="dataList">
+
+
+            </ul>
 
             <button id="scrollToTopBtn" class="scroll-button scroll-to-top">Scroll to Top</button>
 
@@ -892,25 +896,26 @@
 
         </div>
         <div class="bag-extension"
-            style="margin: 20px; border: solid; width: 25%; padding: 15px; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);">
+            style="margin: 20px; border: 1px solid #ddd; width: 25%; padding: 15px; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
             <div class="list-extension-card" style="margin-top: 15px;"></div>
             <form id="extensionForm" style="width: 100%;">
-                <label for="nama_extension">Nama:</label>
-                <input type="text" id="nama_extension" name="nama_extension" required
-                    style="width: 90%; padding: 5px; margin-bottom: 10px;"><br>
+                <label for="nama_extension" style="display: block; margin-bottom: 5px; font-weight: bold;">Nama:</label>
+                <input type="text" id="nama_extension" name="nama_extension" class="input-field" required
+                    style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
 
-                <label for="tipe">Tipe:</label>
-                <input type="text" id="tipe" name="tipe" required
-                    style="width: 90%; padding: 5px; margin-bottom: 10px;"><br>
+                <label for="tipe" style="display: block; margin-bottom: 5px; font-weight: bold;">Tipe:</label>
+                <input type="text" id="tipe" name="tipe" class="input-field" required
+                    style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
 
-                <label for="photo">Foto Profil:</label>
-                <input type="file" id="photo" name="photo" accept="image/*" style="margin-bottom: 10px;"><br>
+                <label for="photo" style="display: block; margin-bottom: 5px; font-weight: bold;">Foto Profil:</label>
+                <input type="file" id="photo" name="photo" class="file-input" accept="image/*"
+                    style="display: block; margin-bottom: 15px;">
 
-                <button type="submit"
-                    style="padding: 5px 10px; border: none; background-color: #4CAF50; color: white; cursor: pointer;">Submit</button>
+                <button type="submit" class="submit-btn"
+                    style="padding: 10px 15px; border: none; background-color: #4CAF50; color: white; cursor: pointer; border-radius: 5px; font-size: 14px;">Submit</button>
             </form>
-
         </div>
+
 
     </div>
 
@@ -945,7 +950,7 @@
             // const storedFilterAttempts = localStorage.getItem('filterAttempts');
             const storedFilterStar = localStorage.getItem('filterStar');
             const storedSupportDesktop = localStorage.getItem('filterSupportDesktop');
-            const storedSupportEmulator = localStorage.getItem('filterSupportEmulator');
+            const storedSupportEmulator = localStorage.getItem('TesnetGroup');
 
             if (storedGroup) {
                 document.getElementById('groupSelect').value = storedGroup;
@@ -968,7 +973,7 @@
             }
 
             if (storedSupportEmulator) {
-                document.getElementById('filterSupportEmulatorSelect').value = storedSupportEmulator;
+                document.getElementById('TesnetGroupSelect').value = storedSupportEmulator;
             }
 
             fetchData();
@@ -1002,8 +1007,8 @@
             fetchData(); // Call your data fetching function
         });
 
-        document.getElementById('filterSupportEmulatorSelect').addEventListener('change', function () {
-            localStorage.setItem('filterSupportEmulator', this.value);
+        document.getElementById('TesnetGroupSelect').addEventListener('change', function () {
+            localStorage.setItem('TesnetGroup', this.value);
             fetchData(); // Call your data fetching function
         });
 
@@ -1170,8 +1175,7 @@
             // const filterAttempts = document.getElementById('filterSelect').value;
             const filterStar = document.getElementById('filterStarSelect').value;
             const filterSupportDesktop = document.getElementById('filterSupportDesktopSelect').value;
-            const filterSupportEmulator = document.getElementById('filterSupportEmulatorSelect').value;
-
+            const TesnetGroup = document.getElementById('TesnetGroupSelect').value;
             const dbRef = ref(database);
 
             // Get last clicked key from localStorage or Firebase
@@ -1236,9 +1240,9 @@
                             );
 
                         // Filter conditions for support to emulator
-                        const matchesSupportEmulator = filterSupportEmulator === 'all' ||
-                            (filterSupportEmulator === 'SupportEmulator' && data.supportToEmulator === true) ||
-                            (filterSupportEmulator === 'NoSupportEmulator' &&
+                        const matchesSupportEmulator = TesnetGroup === 'all' ||
+                            (TesnetGroup === 'SupportEmulator' && data.supportToEmulator === true) ||
+                            (TesnetGroup === 'NoSupportEmulator' &&
                                 (data.supportToEmulator === false || data.supportToEmulator === '' || data.supportToEmulator === undefined)
                             );
 
@@ -1428,14 +1432,19 @@
                             // Checkbox creation for supportToDesktop
                             const supportToEmulatorCheckbox = document.createElement('input');
                             supportToEmulatorCheckbox.classList.add('form-checkbox-supportToEmulator');
-                            supportToEmulatorCheckbox.style.cssText = 'display:none';
+                            // Properti CSS untuk menyembunyikan elemen
                             supportToEmulatorCheckbox.type = 'checkbox';
                             supportToEmulatorCheckbox.checked = data.supportToEmulator || false;
                             supportToEmulatorCheckbox.style.marginLeft = '30px';
+
+                            // Menambahkan event listener jika dibutuhkan
                             supportToEmulatorCheckbox.addEventListener('change', () => {
                                 updateSupportToEmulatorInFirebase(childSnapshot.key, supportToEmulatorCheckbox.checked);
                             });
+
+                            // Menambahkan checkbox ke elemen listItem
                             listItem.appendChild(supportToEmulatorCheckbox);
+
 
                             // Single button for moving to a different group and account
                             const moveButton = document.createElement('button');
@@ -2017,60 +2026,130 @@
                 const data = snapshot.val();
                 for (const key in data) {
                     const item = document.createElement('div');
-                    item.style.border = '1px solid #ccc';
-                    item.style.padding = '10px';
-                    item.style.margin = '10px 0';
-                    item.style.borderRadius = '8px';
-                    item.style.backgroundColor = '#f9f9f9';
-                    item.style.position = 'relative';
+                    item.style.cssText = `
+                border: 1px solid #ccc;
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            `;
+
+                    // Container untuk gambar dan teks
+                    const topSection = document.createElement('div');
+                    topSection.style.cssText = `
+                display: flex;
+                align-items: center;
+                width: 100%;
+                margin-bottom: 10px;
+            `;
 
                     const photo = document.createElement('img');
                     photo.src = data[key].photoUrl || 'https://via.placeholder.com/100';
                     photo.alt = 'Profile photo';
-                    photo.style.width = '50px';
-                    photo.style.height = '50px';
-                    photo.style.borderRadius = '50%';
-                    photo.style.objectFit = 'cover';
-                    photo.style.marginRight = '10px';
+                    photo.style.cssText = `
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-right: 15px;
+            `;
 
-                    const text = document.createElement('span');
-                    text.textContent = `Nama: ${data[key].nama_extension}, Tipe: ${data[key].tipe}`;
-                    text.style.display = 'inline-block';
-                    text.style.verticalAlign = 'middle';
+                    const text = document.createElement('div');
+                    text.style.cssText = `
+                flex: 1;
+                text-align: left;
+                font-size: 14px;
+                line-height: 1.5;
+            `;
+                    text.innerHTML = `<strong>Nama:</strong> ${data[key].nama_extension}<br><strong>Tipe:</strong> ${data[key].tipe}`;
+
+                    // Tambahkan elemen ke dalam topSection
+                    topSection.appendChild(photo);
+                    topSection.appendChild(text);
+
+                    // Container untuk tombol
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.style.cssText = `
+                margin-top: 10px;
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                width: 100%;
+            `;
 
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Edit';
-                    editButton.style.marginLeft = '10px';
-                    editButton.style.padding = '5px';
-                    editButton.style.cursor = 'pointer';
+                    editButton.style.cssText = `
+                padding: 10px 15px;
+                cursor: pointer;
+                border: none;
+                border-radius: 4px;
+                background-color: #4CAF50;
+                color: white;
+                font-size: 14px;
+            `;
+
+                    // Menambahkan event listener untuk tombol Edit
                     editButton.addEventListener('click', () => {
+                        // Isi form edit dengan data yang sesuai
                         document.getElementById('nama_extension').value = data[key].nama_extension;
                         document.getElementById('tipe').value = data[key].tipe;
-                        remove(ref(database, 'extensions/' + key));
+                        document.getElementById('photoUrl').value = data[key].photoUrl || 'https://via.placeholder.com/100';
+
+                        // Menambahkan event submit ke form
+                        document.getElementById('editForm').onsubmit = async (e) => {
+                            e.preventDefault();
+
+                            // Ambil data dari form edit
+                            const updatedData = {
+                                nama_extension: document.getElementById('nama_extension').value,
+                                tipe: document.getElementById('tipe').value,
+                                photoUrl: document.getElementById('photoUrl').value,
+                            };
+
+                            // Update data di database
+                            await update(ref(database, 'extensions/' + key), updatedData);
+
+                            // Tampilkan ulang data setelah diupdate
+                            displayData();
+                        };
                     });
 
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'Hapus';
-                    deleteButton.style.marginLeft = '5px';
-                    deleteButton.style.padding = '5px';
-                    deleteButton.style.cursor = 'pointer';
-                    deleteButton.style.backgroundColor = '#ff4c4c';
-                    deleteButton.style.color = 'white';
+                    deleteButton.style.cssText = `
+                padding: 10px 15px;
+                cursor: pointer;
+                border: none;
+                border-radius: 4px;
+                background-color: #FF4C4C;
+                color: white;
+                font-size: 14px;
+            `;
+
                     deleteButton.addEventListener('click', async () => {
                         await remove(ref(database, 'extensions/' + key));
                         displayData();
                     });
 
-                    item.appendChild(photo);
-                    item.appendChild(text);
-                    item.appendChild(editButton);
-                    item.appendChild(deleteButton);
+                    // Tambahkan tombol ke dalam buttonContainer
+                    buttonContainer.appendChild(editButton);
+                    buttonContainer.appendChild(deleteButton);
+
+                    // Tambahkan elemen ke dalam item
+                    item.appendChild(topSection);
+                    item.appendChild(buttonContainer);
                     listCard.appendChild(item);
                 }
             } else {
                 listCard.textContent = 'No data available';
             }
         }
+
 
         document.addEventListener('DOMContentLoaded', () => {
             displayData();
